@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galería de Eventos - GNA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .bg-gna { background-color: #1b4332; }
+        .carousel-container { position: relative; overflow: hidden; border-radius: 2rem; }
+        .slide { display: none; width: 100%; transition: opacity 0.5s ease-in-out; }
+        .slide.active { display: block; }
+        .text-shadow { text-shadow: 2px 2px 4px rgba(0,0,0,0.7); }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+    <nav class="bg-gna text-white p-4 shadow-xl flex justify-between items-center z-50">
+        <div class="flex items-center gap-3">
+            <img src="logoEscuadron.jpeg" class="w-10 h-10 rounded-full border-2 border-white object-cover">
+            <div>
+                <h1 class="text-[10px] md:text-xs font-black uppercase tracking-widest">Escuadrón de Seguridad Vial Santa Catalina</h1>
+                <p class="text-[8px] text-green-400 font-bold uppercase">Gendarmería Nacional</p>
+            </div>
+        </div>
+        <a href="index.html" class="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-2xl text-[10px] font-black uppercase transition-all text-white no-underline shadow-lg">
+            <i class="fas fa-arrow-left mr-2"></i> Volver
+        </a>
+    </nav>
+
+    <main class="flex-1 flex flex-col items-center p-4 md:p-10">
+        <div class="max-w-5xl w-full">
+            
+            <div class="mb-8 text-center">
+                <h2 class="text-3xl font-black text-gray-800 uppercase tracking-tighter italic">Cena de Camaradería</h2>
+                <p class="text-gray-500 font-bold uppercase text-xs">29 de Diciembre de 2025</p>
+                <div class="h-1.5 w-32 bg-green-700 mx-auto mt-2 rounded-full"></div>
+            </div>
+
+            <div class="carousel-container bg-black shadow-2xl relative aspect-video md:aspect-[16/8]">
+                <div id="slides-wrapper" class="h-full">
+                    </div>
+
+                <button onclick="moveSlide(-1)" class="absolute left-4 top-1/2 -translate-y-1/2 z-30 bg-black/40 hover:bg-green-600 backdrop-blur-md p-4 rounded-full transition-all text-white">
+                    <i class="fas fa-chevron-left text-xl"></i>
+                </button>
+                <button onclick="moveSlide(1)" class="absolute right-4 top-1/2 -translate-y-1/2 z-30 bg-black/40 hover:bg-green-600 backdrop-blur-md p-4 rounded-full transition-all text-white">
+                    <i class="fas fa-chevron-right text-xl"></i>
+                </button>
+
+                <div id="dot-indicators" class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-30">
+                </div>
+            </div>
+
+            <div class="mt-10 grid grid-cols-3 md:grid-cols-6 gap-4" id="thumb-grid"></div>
+        </div>
+
+        <div class="text-gray-500 font-bold uppercase text-xs w-full text-center" >
+            <h2>
+                <p class="text-gray-600 text-sm mt-4 italic">Estas fotografías capturan momentos especiales de la cena de camaradería del Escuadrón Santa Catalina, celebrada el 29 de diciembre de 2025. En ellas se pueden apreciar la alegría, el compañerismo y la camaradería que caracterizan a nuestro grupo, así como los reconocimientos y presentes institucionales entregados durante la velada.</p>
+            </h2>
+        </div>
+    </main>
+
+    <script>
+        // Listado de las nuevas fotografías
+        const cenaPhotos = [
+            { url: "CENA 29DIC25 (3).jpeg", desc: "Grupo completo del Casino de Oficiales." },
+            { url: "CENA 29DIC25 (4).jpeg", desc: "Entrega de presente institucional." },
+            { url: "cena 29DIC25 (5).jpeg", desc: "Reconocimiento a la trayectoria." },
+            { url: "cena 29DIC25 (6).jpeg", desc: "Momento del brindis y camaradería." },
+            { url: "CENA 29DIC25 (7).jpeg", desc: "Integrantes del Escuadrón Santa Catalina." },
+            { url: "cena 29DIC25 (8).jpeg", desc: "Detalle del presente grabado en madera." }
+        ];
+
+        let currentIndex = 0;
+        const wrapper = document.getElementById('slides-wrapper');
+        const dotContainer = document.getElementById('dot-indicators');
+        const thumbGrid = document.getElementById('thumb-grid');
+
+        function initGallery() {
+            cenaPhotos.forEach((photo, index) => {
+                // Crear Slide
+                const slideDiv = document.createElement('div');
+                slideDiv.className = `slide h-full relative ${index === 0 ? 'active' : ''}`;
+                slideDiv.innerHTML = `
+                    <img src="${photo.url}" class="w-full h-full object-contain md:object-cover" alt="Cena GNA">
+                    <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 p-6">
+                        <p class="text-white font-bold uppercase text-sm md:text-lg text-shadow">${photo.desc}</p>
+                    </div>
+                `;
+                wrapper.appendChild(slideDiv);
+
+                // Crear Punto
+                const dot = document.createElement('button');
+                dot.className = `h-2 w-2 rounded-full transition-all ${index === 0 ? 'bg-green-500 w-6' : 'bg-white/50'}`;
+                dot.onclick = () => goToSlide(index);
+                dotContainer.appendChild(dot);
+
+                // Crear Miniatura
+                const thumb = document.createElement('img');
+                thumb.src = photo.url;
+                thumb.className = `aspect-square object-cover rounded-lg cursor-pointer hover:scale-105 transition-transform border-2 ${index === 0 ? 'border-green-600' : 'border-transparent'}`;
+                thumb.onclick = () => goToSlide(index);
+                thumbGrid.appendChild(thumb);
+            });
+        }
+
+        function updateUI() {
+            const slides = document.querySelectorAll('.slide');
+            const dots = dotContainer.querySelectorAll('button');
+            const thumbs = thumbGrid.querySelectorAll('img');
+            
+            slides.forEach((s, i) => s.classList.toggle('active', i === currentIndex));
+            dots.forEach((d, i) => {
+                d.classList.toggle('bg-green-500', i === currentIndex);
+                d.classList.toggle('w-6', i === currentIndex);
+                d.classList.toggle('bg-white/50', i !== currentIndex);
+            });
+            thumbs.forEach((t, i) => {
+                t.classList.toggle('border-green-600', i === currentIndex);
+                t.classList.toggle('opacity-50', i !== currentIndex);
+            });
+        }
+
+        function moveSlide(step) {
+            currentIndex = (currentIndex + step + cenaPhotos.length) % cenaPhotos.length;
+            updateUI();
+        }
+
+        function goToSlide(index) {
+            currentIndex = index;
+            updateUI();
+        }
+
+        initGallery();
+    </script>
+</body>
+</html>

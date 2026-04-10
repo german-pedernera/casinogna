@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Casino Oficiales - GNA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        /* Contenedor principal del botón */
+.whatsapp-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    background-color: #25d366;
+    color: #fff;
+    border-radius: 50px;
+    text-align: center;
+    font-size: 35px;
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: transform 0.3s ease;
+    
+    /* Animación de pulso */
+    animation: pulse 2s infinite;
+}
+
+/* Efecto Hover (al pasar el ratón) */
+.whatsapp-btn:hover {
+    transform: scale(1.1);
+    background-color: #20ba5a;
+    color: white;
+}
+
+/* Tooltip (pequeño texto informativo) */
+.whatsapp-btn .tooltip {
+    visibility: hidden;
+    width: 160px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    right: 125%; 
+    font-size: 14px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.whatsapp-btn:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Definición de la animación de pulso */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 15px rgba(37, 211, 102, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+    }
+}
+    </style>
+    <style>
+        .hidden-section { display: none !important; }
+        .bg-gna { background-color: #1b4332; }
+        .modal-active { overflow: hidden; }
+        .card-btn { transition: all 0.3s ease; cursor: pointer; }
+        .card-btn:hover { transform: translateY(-5px); }
+        
+        .calc-btn {
+            background-color: #e5e7eb; padding: 1rem; border-radius: 0.75rem; 
+            font-size: 1.25rem; font-weight: 700; transition: all 150ms; 
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); 
+        }
+        .calc-btn:hover { background-color: #d1d5db; } 
+        .calc-btn:active { transform: scale(0.95); } 
+
+        .calc-op {
+            background-color: #f97316; color: #ffffff; padding: 1rem; 
+            border-radius: 0.75rem; font-size: 1.25rem; font-weight: 700; 
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); 
+        }
+        .calc-op:hover { background-color: #ea580c; } 
+
+        .btn-icon {
+            padding: 0.5rem; border-radius: 0.5rem; transition: all 150ms; 
+            display: inline-flex; align-items: center; justify-content: center; 
+        }
+        .btn-icon:active { transform: scale(0.9); } 
+
+        tr.aporte-row { background-color: #f0fdf4; }
+        input:focus, select:focus { border-color: #1b4332; color: #040f6b; outline: none }
+        .bg-readonly { background-color: #f3f4f6; cursor: not-allowed; }
+        
+        .section-modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+            display: none; align-items: center; justify-content: center; z-index: 60;
+            backdrop-filter: blur(4px); padding: 1rem;
+        }
+        .section-modal.active { display: flex; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen font-sans text-gray-800">
+
+       <div id="modalAuth" class="fixed inset-0 flex items-center justify-center z-[100] hidden">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
+        <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-sm z-[110] relative border-t-8 border-red-600">
+            <h3 class="text-xl font-black mb-4 text-center uppercase">Autorización Requerida</h3>
+            <p class="text-xs text-gray-500 mb-6 text-center">Ingrese credenciales para realizar esta acción.</p>
+            <div class="space-y-4">
+                <input type="text" id="auth-user" placeholder="Usuario" class="w-full p-4 border-2 rounded-2xl">
+                <input type="password" id="auth-pass" placeholder="Clave" class="w-full p-4 border-2 rounded-2xl">
+                <div class="flex gap-2">
+                    <button id="btn-cancel-auth" class="flex-1 bg-gray-200 font-bold py-3 rounded-xl uppercase">Cancelar</button>
+                    <button id="btn-confirm-auth" class="flex-1 bg-red-600 text-white font-bold py-3 rounded-xl uppercase">Validar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+        <a href="https://chat.whatsapp.com/GRAhacEZeOiLGvpFQb3iKO" class="whatsapp-btn" target="_blank">
+            <i class="fab fa-whatsapp"></i>
+            <span class="tooltip">¡Únete a nuestro grupo!</span>
+        </a>
+    </div>
+
+    <div id="login-section" class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md border-t-8 border-green-900 text-center">
+            <div class="flex justify-center mb-6">
+                <img src="/logoEscuadron.jpeg" alt="Logo GNA" class="w-24 h-24 rounded-full border-4 border-green-800 object-cover bg-white">
+            </div>
+            <h2 class="text-2xl font-black mb-6 uppercase text-gray-700">Sistema Casino Oficiales<br><p>Escuadrón de seguridad vial Santa Catalina</p></h2>
+            <div class="space-y-4">
+                <input type="number" id="login-mi" placeholder="MI (DNI)" class="w-full p-4 border-2 rounded-2xl">
+                <input type="text" id="login-ce" placeholder="CE (Credencial)" class="w-full p-4 border-2 rounded-2xl">
+                <button id="btn-login" class="w-full bg-green-800 text-white font-bold py-4 rounded-2xl shadow-xl uppercase">Ingresar</button>
+            </div>
+            <p id="login-error" class="text-red-500 font-bold mt-4 hidden">⚠️ MI o CE Incorrectos</p>
+        </div>
+    </div>
+
+    <div id="main-app" class="hidden-section">
+        <nav class="bg-gna text-white p-4 shadow-xl sticky top-0 z-50">
+            <div class="container mx-auto flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <img src="/logoEscuadron.jpeg" class="w-10 h-10 rounded-full bg-white">
+                    <span class="font-black uppercase text-xs md:text-sm tracking-widest">Casino de Oficiales</span>
+                </div>
+                <div class="flex gap-2 items-center">
+                    <button id="btn-calc-toggle" class="bg-yellow-500 text-black px-4 py-2 rounded-xl text-xs font-black">🧮 CALCULADORA</button>
+                    <button onclick="location.reload()" class="bg-red-600 px-4 py-2 rounded-xl text-xs font-bold">SALIR</button>
+                <a href="documentacion.html" class="bg-blue-700 text-white px-3 py-2 rounded-xl text-[10px] md:text-xs font-black uppercase hover:bg-blue-800 transition">📄 Doc</a>
+    <a href="galeria.html" class="bg-purple-700 text-white px-3 py-2 rounded-xl text-[10px] md:text-xs font-black uppercase hover:bg-purple-800 transition">🖼️ Galería</a>
+                </div>
+            </div>
+        </nav>
+
+        <main class="container mx-auto p-6">
+            <div>
+
+                <section>
+
+                    
+                </section>
+
+
+
+                
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <div onclick="openSectionModal('modal-registro')" class="card-btn bg-white p-8 rounded-3xl shadow-lg border-b-8 border-blue-600 text-center">
+                    <div class="text-5xl mb-4">👤</div>
+                    <h3 class="font-black text-blue-900 uppercase">Registro de Socio</h3>
+                    <p class="text-xs text-gray-400 mt-2">Alta y edición de personal</p>
+                </div>
+                <div onclick="openSectionModal('modal-aportes')" class="card-btn bg-white p-8 rounded-3xl shadow-lg border-b-8 border-green-600 text-center">
+                    <div class="text-5xl mb-4">💰</div>
+                    <h3 class="font-black text-green-900 uppercase">Aportes</h3>
+                    <p class="text-xs text-gray-400 mt-2">Carga de cuotas y mensualidades</p>
+                </div>
+                <div onclick="openSectionModal('modal-contable')" class="card-btn bg-white p-8 rounded-3xl shadow-lg border-b-8 border-orange-600 text-center">
+                    <div class="text-5xl mb-4">📖</div>
+                    <h3 class="font-black text-orange-900 uppercase">Libro Contable</h3>
+                    <p class="text-xs text-gray-400 mt-2">Ingresos, egresos y balances</p>
+                </div>
+            </div>
+
+            <section class="bg-white p-6 rounded-3xl shadow-lg border-t-8 border-purple-600 mb-10">
+                <h2 class="text-xl font-black mb-6 text-purple-900 uppercase flex items-center gap-2">
+                    <span>📩</span> Propuestas para el Casino
+                </h2>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="space-y-4 bg-purple-50 p-6 rounded-2xl">
+                        <input type="number" id="msg-mi" placeholder="Su MI (DNI)" class="w-full p-3 border-2 rounded-xl">
+                        <input type="text" id="msg-ce" placeholder="Su CE (Credencial)" class="w-full p-3 border-2 rounded-xl">
+                        <textarea id="msg-texto" placeholder="Escriba su propuesta o sugerencia..." class="w-full p-3 border-2 rounded-xl h-32"></textarea>
+                        <button id="btn-send-msg" class="w-full bg-purple-700 text-white font-black py-3 rounded-xl hover:bg-purple-800 uppercase">Enviar Propuesta</button>
+                    </div>
+                    <div class="lg:col-span-2 space-y-4 max-h-[500px] overflow-y-auto pr-2" id="mensajes-container">
+                        </div>
+                </div>
+            </section>
+
+            <div id="display-section" class="hidden-section bg-white p-6 rounded-3xl shadow-2xl border-2 border-gray-100 mb-10">
+                <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4 border-b pb-4">
+                    <h3 id="display-title" class="text-2xl font-black uppercase text-gray-600">Planilla</h3>
+                    <div class="flex gap-2 w-full md:w-auto">
+                        <input type="text" id="live-filter" placeholder="🔍 Filtrar..." class="p-4 border-2 border-blue-200 rounded-2xl w-full md:w-64">
+                        <button onclick="document.getElementById('display-section').classList.add('hidden-section')" class="bg-gray-200 px-4 rounded-2xl font-bold text-gray-600">OCULTAR</button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse" id="main-table">
+                        <thead class="bg-gray-900 text-white uppercase text-xs">
+                            <tr id="table-header"></tr>
+                        </thead>
+                        <tbody id="table-body" class="text-sm divide-y"></tbody>
+                        <tfoot id="table-footer" class="bg-gray-100 font-black border-t-4 border-gray-900"></tfoot>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="modal-registro" class="section-modal">
+        <div class="bg-white w-full max-w-2xl rounded-3xl overflow-hidden shadow-2xl">
+            <div class="bg-blue-600 p-4 text-white flex justify-between items-center">
+                <h3 class="font-black uppercase">Registro de Socio</h3>
+                <button onclick="closeSectionModal('modal-registro')" class="text-2xl font-bold">&times;</button>
+            </div>
+            <div class="p-6">
+                <form id="form-socio" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-500 uppercase ml-2">Nro Orden</label>
+                        <input type="number" id="s-orden" readonly class="w-full p-3 border-2 rounded-2xl bg-readonly font-bold text-blue-800">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-500 uppercase ml-2">Jerarquía</label>
+                        <select id="s-jerarquia" class="w-full p-3 border-2 rounded-2xl text-sm bg-gray-50">
+                            <option value="">Seleccionar...</option>
+                            <optgroup label="Oficiales">
+                                <option>Comandante General</option><option>Comandante Mayor</option><option>Comandante Principal</option>
+                                <option>Comandante</option><option>Segundo Comandante</option><option>Primer Alférez</option><option>Alférez</option><option>Subalférez</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <input type="text" id="s-nombre" placeholder="Nombre y Apellido" class="p-3 border-2 rounded-2xl md:col-span-2 uppercase font-bold">
+                    <input type="number" id="s-mi" placeholder="MI (DNI)" class="p-3 border-2 rounded-2xl">
+                    <input type="text" id="s-ce" placeholder="CE (Credencial)" class="p-3 border-2 rounded-2xl">
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-500 uppercase ml-2">Fecha Nacimiento</label>
+                        <input type="date" id="s-nac" class="p-3 border-2 rounded-2xl w-full">
+                    </div>
+                    <input type="tel" id="s-tel" placeholder="Celular Particular" class="p-3 border-2 rounded-2xl">
+                    <div class="md:col-span-2 flex gap-3">
+                        <button type="button" id="btn-save-socio" class="bg-blue-600 text-white font-black py-3 px-6 rounded-2xl flex-1">GUARDAR SOCIO</button>
+                        <button type="button" id="btn-show-socios" class="bg-gray-100 text-blue-700 font-bold border-2 border-blue-600 py-3 px-6 rounded-2xl flex-1">LISTA SOCIOS</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-aportes" class="section-modal">
+        <div class="bg-white w-full max-w-xl rounded-3xl overflow-hidden shadow-2xl">
+            <div class="bg-green-600 p-4 text-white flex justify-between items-center">
+                <h3 class="font-black uppercase">Gestión de Aportes</h3>
+                <button onclick="closeSectionModal('modal-aportes')" class="text-2xl font-bold">&times;</button>
+            </div>
+            <div class="p-6 space-y-4">
+                <input type="text" id="ap-search" list="lista-socios" placeholder="Buscar por MI o Apellido..." class="w-full p-4 border-2 border-green-100 rounded-2xl bg-green-50/20">
+                <datalist id="lista-socios"></datalist>
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="date" id="ap-fecha" class="p-3 border-2 rounded-2xl">
+                    <input type="number" id="ap-monto" placeholder="Monto $" class="p-3 border-2 rounded-2xl font-black text-green-700 text-xl">
+                </div>
+                <button id="btn-save-aporte" class="w-full bg-green-700 text-white font-black py-4 rounded-2xl shadow-xl uppercase">Registrar y Contabilizar</button>
+                <button id="btn-open-modal" class="w-full bg-purple-700 text-white font-bold py-3 rounded-2xl opacity-80 uppercase text-xs">Planilla de Aportes General</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-contable" class="section-modal">
+        <div class="bg-white w-full max-w-3xl rounded-3xl overflow-hidden shadow-2xl">
+            <div class="bg-orange-600 p-4 text-white flex justify-between items-center">
+                <h3 class="font-black uppercase">Movimientos Contables</h3>
+                <button onclick="closeSectionModal('modal-contable')" class="text-2xl font-bold">&times;</button>
+            </div>
+            <div class="p-6">
+                <div class="flex justify-around mb-6 text-xs font-bold">
+                    <div class="text-center">Ingresos <br><span id="resumen-debe" class="text-green-600 text-lg">$ 0</span></div>
+                    <div class="text-center">Egresos <br><span id="resumen-haber" class="text-red-600 text-lg">$ 0</span></div>
+                    <div class="text-center">Saldo <br><span id="resumen-neto" class="text-blue-900 text-lg font-black">$ 0</span></div>
+                </div>
+                <form id="form-contable" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="date" id="c-fecha" class="p-3 border-2 rounded-xl">
+                    <input type="text" id="c-concepto" placeholder="Detalle Movimiento" class="p-3 border-2 rounded-xl uppercase font-semibold">
+                    <input type="number" id="c-debe" placeholder="Ingreso (+)" class="p-3 border-2 border-green-200 rounded-xl bg-green-50 font-bold text-green-700">
+                    <input type="number" id="c-haber" placeholder="Egreso (-)" class="p-3 border-2 border-red-200 rounded-xl bg-red-50 font-bold text-red-700">
+                    <button type="button" id="btn-save-contable" class="bg-orange-600 text-white font-black py-3 rounded-xl md:col-span-2">GUARDAR REGISTRO</button>
+                    <button type="button" id="btn-show-contable" class="bg-gray-800 text-white font-black py-3 rounded-xl md:col-span-2">VER PLANILLA COMPLETA</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="calc-section" class="hidden-section fixed bottom-4 right-4 z-[80] p-4 bg-white rounded-3xl shadow-2xl border-4 border-gray-800 w-72">
+        <input type="text" id="calc-display" readonly class="w-full text-right text-2xl p-4 bg-gray-900 text-green-400 rounded-2xl mb-4 font-mono">
+        <div class="grid grid-cols-4 gap-2">
+            <button id="calc-clear" class="calc-btn col-span-2 bg-red-500 text-white font-bold text-sm">C</button>
+            <button onclick="calcIn('/')" class="calc-op text-sm">/</button>
+            <button onclick="calcIn('*')" class="calc-op text-sm">*</button>
+            <button onclick="calcIn('7')" class="calc-btn text-sm">7</button>
+            <button onclick="calcIn('8')" class="calc-btn text-sm">8</button>
+            <button onclick="calcIn('9')" class="calc-btn text-sm">9</button>
+            <button onclick="calcIn('-')" class="calc-op text-sm">-</button>
+            <button onclick="calcIn('4')" class="calc-btn text-sm">4</button>
+            <button onclick="calcIn('5')" class="calc-btn text-sm">5</button>
+            <button onclick="calcIn('6')" class="calc-btn text-sm">6</button>
+            <button onclick="calcIn('+')" class="calc-op text-sm">+</button>
+            <button onclick="calcIn('1')" class="calc-btn text-sm">1</button>
+            <button onclick="calcIn('2')" class="calc-btn text-sm">2</button>
+            <button onclick="calcIn('3')" class="calc-btn text-sm">3</button>
+            <button id="calc-res" class="calc-op row-span-2 bg-green-700 text-xs">ENT</button>
+            <button onclick="calcIn('0')" class="calc-btn col-span-2 text-sm">0</button>
+            <button onclick="calcIn('.')" class="calc-btn text-sm">.</button>
+        </div>
+    </div>
+
+    <div id="modalPagos" class="fixed inset-0 flex items-center justify-center opacity-0 pointer-events-none z-[70] transition-opacity duration-300">
+        <div id="modal-overlay" class="absolute inset-0 bg-black/70 backdrop-blur-md"></div>
+        <div class="bg-white w-11/12 max-w-6xl mx-auto rounded-3xl shadow-2xl z-50 overflow-hidden relative">
+            <div class="p-6 bg-purple-900 text-white flex justify-between items-center">
+                <h3 class="font-black uppercase text-xl">Historial de Aportes</h3>
+                <button id="btn-close-modal" class="text-4xl">&times;</button>
+            </div>
+            <div class="p-8">
+                <div class="flex gap-4 mb-6">
+                    <input type="text" id="modal-search" placeholder="🔍 Buscar por nombre o MI..." class="flex-1 p-4 border-2 rounded-2xl">
+                    <button id="btn-save-modal-aporte" class="bg-green-600 text-white px-8 rounded-2xl font-black uppercase">Guardar Cambios</button>
+                </div>
+                <div class="overflow-x-auto max-h-[55vh] border rounded-2xl">
+                    <table class="w-full border-collapse">
+                        <thead class="bg-gray-50 sticky top-0">
+                            <tr class="text-[10px] uppercase font-black text-gray-500 border-b">
+                                <th class="p-4 text-left">DNI</th>
+                                <th class="p-4 text-left">Socio</th>
+                                <th class="p-4 text-center">Fecha Pago</th>
+                                <th class="p-4 text-right">Monto $</th>
+                                <th class="p-4 text-center">Gestión</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modal-body" class="text-sm divide-y"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue, remove, update } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBUF4GHEl4jTr_t7Au1BHDZy6j7eXpw7MY",
+            authDomain: "casinossoo.firebaseapp.com",
+            databaseURL: "https://casinossoo-default-rtdb.firebaseio.com",
+            projectId: "casinossoo",
+            storageBucket: "casinossoo.firebasestorage.app",
+            messagingSenderId: "795140491884",
+            appId: "1:795140491884:web:00832b94a34e32ab0be649"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const dbFirebase = getDatabase(app);
+
+        window.db = { socios: [], contable: [], aportes: [], mensajes: [] };
+        window.editId = null;
+        window.editAporteId = null;
+        window.activeType = '';
+        let pendingAction = null;
+
+        // --- SISTEMA DE AUTORIZACIÓN ---
+        function requestAuth(action) {
+            pendingAction = action;
+            document.getElementById('modalAuth').classList.remove('hidden');
+            document.getElementById('auth-user').value = '';
+            document.getElementById('auth-pass').value = '';
+            document.getElementById('auth-user').focus();
+        }
+
+        document.getElementById('btn-confirm-auth').addEventListener('click', () => {
+            const user = document.getElementById('auth-user').value;
+            const pass = document.getElementById('auth-pass').value;
+            if (user === 'Ger25' && pass === 'Emi25') {
+                document.getElementById('modalAuth').classList.add('hidden');
+                if (pendingAction) pendingAction();
+                pendingAction = null;
+            } else {
+                alert("❌ Credenciales de autorización incorrectas.");
+            }
+        });
+
+        document.getElementById('btn-cancel-auth').addEventListener('click', () => {
+            document.getElementById('modalAuth').classList.add('hidden');
+            pendingAction = null;
+        });
+
+        // --- FIREBASE SYNC ---
+        onValue(ref(dbFirebase, 'gna'), (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                window.db.socios = Object.values(data.socios || {});
+                window.db.contable = Object.values(data.contable || {});
+                window.db.aportes = Object.values(data.aportes || {});
+                window.db.mensajes = Object.values(data.mensajes || {});
+                updateDatalist();
+                actualizarResumenContable();
+                getNextOrder();
+                renderMensajes();
+                if(!document.getElementById('display-section').classList.contains('hidden-section')) renderTable();
+                if(!document.getElementById('modalPagos').classList.contains('opacity-0')) renderModalTable();
+            }
+        });
+
+        // --- GESTIÓN DE MENSAJES (SÓLO SI MI Y CE COINCIDEN) ---
+        window.enviarMensaje = () => {
+            const mi = document.getElementById('msg-mi').value;
+            const ce = document.getElementById('msg-ce').value;
+            const texto = document.getElementById('msg-texto').value;
+            
+            // Validación estricta: Busca un socio donde AMBOS coincidan
+            const socio = window.db.socios.find(s => s.mi === mi && s.ce === ce);
+            
+            if(!socio) return alert("❌ Acceso denegado: MI o CE incorrectos.");
+            if(!texto.trim()) return alert("Escriba un mensaje.");
+
+            const id = Date.now().toString();
+            set(ref(dbFirebase, `gna/mensajes/${id}`), {
+                id, mi, nombre: socio.nombre, jerarquia: socio.jerarquia, texto, fecha: new Date().toLocaleString(), respuesta: ''
+            }).then(() => {
+                document.getElementById('msg-texto').value = '';
+                alert("Propuesta enviada correctamente.");
+            });
+        };
+
+        window.deleteMsg = (id) => {
+            requestAuth(() => {
+                if(confirm("¿Eliminar este mensaje?")) remove(ref(dbFirebase, `gna/mensajes/${id}`));
+            });
+        };
+
+        window.replyMsg = (id) => {
+            const resp = prompt("Escriba la respuesta oficial:");
+            if(resp) {
+                requestAuth(() => {
+                    update(ref(dbFirebase, `gna/mensajes/${id}`), { respuesta: resp });
+                });
+            }
+        };
+
+        function renderMensajes() {
+            const container = document.getElementById('mensajes-container');
+            container.innerHTML = '';
+            window.db.mensajes.sort((a,b) => b.id - a.id).forEach(m => {
+                container.innerHTML += `
+                    <div class="bg-white border-2 border-purple-100 p-4 rounded-2xl shadow-sm relative">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <span class="text-[10px] font-black text-purple-600 uppercase">${m.jerarquia}</span>
+                                <h4 class="font-bold text-gray-800">${m.nombre}</h4>
+                            </div>
+                            <span class="text-[10px] text-gray-400 font-mono">${m.fecha}</span>
+                        </div>
+                        <p class="text-sm text-gray-600 italic">"${m.texto}"</p>
+                        ${m.respuesta ? `<div class="mt-3 bg-green-50 p-3 rounded-xl border-l-4 border-green-500 text-xs"><strong>Respuesta:</strong> ${m.respuesta}</div>` : ''}
+                        <div class="mt-4 flex gap-2 justify-end">
+                            <button onclick="replyMsg('${m.id}')" class="text-[10px] bg-gray-100 px-2 py-1 rounded font-bold hover:bg-purple-100">RESPONDER</button>
+                            <button onclick="deleteMsg('${m.id}')" class="text-[10px] bg-red-50 text-red-600 px-2 py-1 rounded font-bold hover:bg-red-100">BORRAR</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // --- ACCIONES PROTEGIDAS ---
+        window.saveData = (type) => {
+            requestAuth(() => {
+                const id = window.editId || Date.now().toString();
+                let data = { id };
+                if (type === 'socios') {
+                    data = { ...data, 
+                        orden: document.getElementById('s-orden').value,
+                        jerarquia: document.getElementById('s-jerarquia').value,
+                        nombre: document.getElementById('s-nombre').value.toUpperCase(),
+                        mi: document.getElementById('s-mi').value,
+                        ce: document.getElementById('s-ce').value,
+                        nac: document.getElementById('s-nac').value,
+                        tel: document.getElementById('s-tel').value
+                    };
+                    if(!data.mi || !data.nombre) return alert("DNI y Nombre requeridos.");
+                    closeSectionModal('modal-registro');
+                } else {
+                    data = { ...data, 
+                        fecha: document.getElementById('c-fecha').value,
+                        concepto: document.getElementById('c-concepto').value.toUpperCase(),
+                        debe: parseFloat(document.getElementById('c-debe').value) || 0,
+                        haber: parseFloat(document.getElementById('c-haber').value) || 0
+                    };
+                    closeSectionModal('modal-contable');
+                }
+                set(ref(dbFirebase, `gna/${type}/${id}`), data).then(() => {
+                    alert("Operación exitosa.");
+                    resetForms();
+                });
+            });
+        };
+
+        window.deleteItem = (type, id) => {
+            requestAuth(() => {
+                if(confirm("⚠️ ¿Desea eliminar este registro permanentemente?")) {
+                    remove(ref(dbFirebase, `gna/${type}/${id}`));
+                }
+            });
+        };
+
+        window.saveAporte = () => {
+            requestAuth(() => {
+                const miInput = document.getElementById('ap-search').value;
+                const s = window.db.socios.find(i => i.mi === miInput || i.nombre === miInput);
+                if(!s) return alert("Socio no encontrado.");
+                const monto = parseFloat(document.getElementById('ap-monto').value) || 0;
+                const fecha = document.getElementById('ap-fecha').value;
+                if(!monto || !fecha) return alert("Monto y fecha requeridos.");
+                
+                const aporteId = Date.now().toString();
+                const contableId = (Date.now() + 1).toString();
+
+                set(ref(dbFirebase, `gna/aportes/${aporteId}`), { 
+                    id: aporteId, mi: s.mi, jerarquia: s.jerarquia, nombre: s.nombre, fecha, monto 
+                });
+                
+                set(ref(dbFirebase, `gna/contable/${contableId}`), { 
+                    id: contableId, fecha, concepto: `CUOTA SOCIO: ${s.jerarquia} ${s.nombre} (MI ${s.mi})`, debe: monto, haber: 0 
+                });
+
+                document.getElementById('ap-monto').value = '';
+                alert("Aporte registrado.");
+                closeSectionModal('modal-aportes');
+            });
+        };
+
+        window.saveAporteModal = () => {
+            if (!window.editAporteId) return alert("Seleccione un aporte para editar.");
+            requestAuth(() => {
+                const row = document.querySelector(`tr[data-id="${window.editAporteId}"]`);
+                const fecha = row.querySelector('.edit-fecha').value;
+                const monto = parseFloat(row.querySelector('.edit-monto').value);
+                update(ref(dbFirebase, `gna/aportes/${window.editAporteId}`), { fecha, monto })
+                .then(() => {
+                    alert("Aporte actualizado.");
+                    window.editAporteId = null;
+                    renderModalTable();
+                });
+            });
+        };
+
+        // EVENTOS DOM
+        document.getElementById('btn-login').addEventListener('click', checkLogin);
+        document.getElementById('btn-save-socio').addEventListener('click', () => window.saveData('socios'));
+        document.getElementById('btn-save-contable').addEventListener('click', () => window.saveData('contable'));
+        document.getElementById('btn-save-aporte').addEventListener('click', window.saveAporte);
+        document.getElementById('btn-show-socios').addEventListener('click', () => { closeSectionModal('modal-registro'); showTableSection('socios'); });
+        document.getElementById('btn-show-contable').addEventListener('click', () => { closeSectionModal('modal-contable'); showTableSection('contable'); });
+        document.getElementById('btn-open-modal').addEventListener('click', openModal);
+        document.getElementById('btn-close-modal').addEventListener('click', closeModal);
+        document.getElementById('btn-calc-toggle').addEventListener('click', toggleCalculator);
+        document.getElementById('calc-clear').addEventListener('click', calcClear);
+        document.getElementById('calc-res').addEventListener('click', calcRes);
+        document.getElementById('live-filter').addEventListener('input', renderTable);
+        document.getElementById('modal-search').addEventListener('input', renderModalTable);
+        document.getElementById('btn-save-modal-aporte').addEventListener('click', window.saveAporteModal);
+        document.getElementById('btn-send-msg').addEventListener('click', window.enviarMensaje);
+
+        // --- SOPORTE TECLADO CALCULADORA ---
+        window.addEventListener('keydown', (e) => {
+            if (document.getElementById('calc-section').classList.contains('hidden-section')) return;
+            const key = e.key;
+            if (/[0-9+\-*/.]/.test(key)) { e.preventDefault(); calcIn(key); }
+            if (key === 'Enter') { e.preventDefault(); calcRes(); }
+            if (key === 'Escape' || key === 'Delete') { e.preventDefault(); calcClear(); }
+            if (key === 'Backspace') { 
+                e.preventDefault(); 
+                const d = document.getElementById('calc-display');
+                d.value = d.value.slice(0, -1);
+            }
+        });
+    </script>
+
+    <script>
+        // LÓGICA DE UI
+        function checkLogin() {
+            const mi = document.getElementById('login-mi').value;
+            const ce = document.getElementById('login-ce').value;
+            const socio = window.db.socios.find(s => s.mi === mi && s.ce === ce);
+            if (socio) {
+                document.getElementById('login-section').classList.add('hidden-section');
+                document.getElementById('main-app').classList.remove('hidden-section');
+            } else {
+                document.getElementById('login-error').classList.remove('hidden-section');
+            }
+        }
+
+        function openSectionModal(id) { document.getElementById(id).classList.add('active'); document.body.classList.add('modal-active'); }
+        function closeSectionModal(id) { document.getElementById(id).classList.remove('active'); document.body.classList.remove('modal-active'); }
+
+        function calculateAge(birthday) {
+            if(!birthday) return "-";
+            const birthDate = new Date(birthday);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            if (today.getMonth() < birthDate.getMonth() || (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())) age--;
+            return age;
+        }
+
+        function getNextOrder() {
+            const sOrden = document.getElementById('s-orden');
+            if (window.db.socios.length === 0) { sOrden.value = 1; }
+            else { 
+                const max = Math.max(...window.db.socios.map(s => parseInt(s.orden) || 0)); 
+                sOrden.value = max + 1; 
+            }
+        }
+
+        function toggleCalculator() { document.getElementById('calc-section').classList.toggle('hidden-section'); }
+        window.calcIn = (v) => { document.getElementById('calc-display').value += v; }
+        function calcClear() { document.getElementById('calc-display').value = ''; }
+        function calcRes() { try { document.getElementById('calc-display').value = eval(document.getElementById('calc-display').value); } catch { document.getElementById('calc-display').value = "ERROR"; } }
+
+        function actualizarResumenContable() {
+            let tD = 0; let tH = 0;
+            window.db.contable.forEach(i => { tD += parseFloat(i.debe) || 0; tH += parseFloat(i.haber) || 0; });
+            document.getElementById('resumen-debe').innerText = `$ ${tD.toLocaleString()}`;
+            document.getElementById('resumen-haber').innerText = `$ ${tH.toLocaleString()}`;
+            document.getElementById('resumen-neto').innerText = `$ ${(tD - tH).toLocaleString()}`;
+        }
+
+        function showTableSection(type) {
+            window.activeType = type;
+            document.getElementById('display-section').classList.remove('hidden-section');
+            document.getElementById('display-title').innerText = type === 'socios' ? 'Socios Registrados' : 'Libro Contable';
+            renderTable();
+            window.scrollTo({ top: document.getElementById('display-section').offsetTop - 100, behavior: 'smooth' });
+        }
+
+        function renderTable() {
+            const h = document.getElementById('table-header');
+            const b = document.getElementById('table-body');
+            const f = document.getElementById('table-footer');
+            const query = document.getElementById('live-filter').value.toLowerCase();
+            b.innerHTML = ''; f.innerHTML = '';
+            
+            const filtered = window.db[window.activeType].filter(i => 
+                (i.nombre && i.nombre.toLowerCase().includes(query)) || 
+                (i.concepto && i.concepto.toLowerCase().includes(query)) || 
+                (i.mi && i.mi.includes(query))
+            );
+
+            if (window.activeType === 'socios') {
+                h.innerHTML = '<th class="p-4">Orden</th><th class="p-4">Nombre</th><th class="p-4">DNI</th><th class="p-4">Edad</th><th class="p-4 text-center">Gestión</th>';
+                filtered.forEach(i => {
+                    b.innerHTML += `<tr class="hover:bg-blue-50">
+                        <td class="p-4 border text-center font-bold">${i.orden}</td>
+                        <td class="p-4 border font-semibold uppercase">${i.nombre}</td>
+                        <td class="p-4 border">${i.mi}</td>
+                        <td class="p-4 border text-center font-bold text-blue-800">${calculateAge(i.nac)}</td>
+                        <td class="p-4 border text-center">
+                            <div class="flex justify-center gap-2">
+                                <button onclick="loadEdit('socios', '${i.id}')" class="btn-icon bg-blue-100 text-blue-600">✏️</button>
+                                <button onclick="deleteItem('socios', '${i.id}')" class="btn-icon bg-red-100 text-red-600">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>`;
+                });
+            } else {
+                h.innerHTML = '<th class="p-4">Fecha</th><th class="p-4">Concepto</th><th class="p-4">Ingreso</th><th class="p-4">Egreso</th><th class="p-4 text-center">Gestión</th>';
+                let tD = 0, tH = 0;
+                filtered.sort((a,b) => new Date(b.fecha) - new Date(a.fecha)).forEach(i => {
+                    tD += i.debe; tH += i.haber;
+                    b.innerHTML += `<tr class="${i.concepto.includes('CUOTA') ? 'aporte-row' : ''} hover:bg-orange-50">
+                        <td class="p-4 border text-xs">${i.fecha}</td>
+                        <td class="p-4 border uppercase text-xs">${i.concepto}</td>
+                        <td class="p-4 border text-green-700 font-bold text-right">$ ${i.debe.toFixed(2)}</td>
+                        <td class="p-4 border text-red-700 font-bold text-right">$ ${i.haber.toFixed(2)}</td>
+                        <td class="p-4 border text-center">
+                            <div class="flex justify-center gap-2">
+                                <button onclick="loadEdit('contable', '${i.id}')" class="btn-icon bg-blue-100 text-blue-600">✏️</button>
+                                <button onclick="deleteItem('contable', '${i.id}')" class="btn-icon bg-red-100 text-red-600">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>`;
+                });
+                f.innerHTML = `<tr><td colspan="2" class="p-4 text-right">TOTAL:</td><td class="p-4 text-green-800 text-right font-black">$ ${tD.toFixed(2)}</td><td class="p-4 text-red-800 text-right font-black">$ ${tH.toFixed(2)}</td><td class="p-4 text-center text-blue-900">NETO: $ ${(tD-tH).toFixed(2)}</td></tr>`;
+            }
+        }
+
+        window.loadEdit = (type, id) => {
+            const i = window.db[type].find(x => x.id === id); 
+            window.editId = id;
+            if(type === 'socios') {
+                openSectionModal('modal-registro');
+                document.getElementById('s-orden').value = i.orden; document.getElementById('s-jerarquia').value = i.jerarquia;
+                document.getElementById('s-nombre').value = i.nombre; document.getElementById('s-mi').value = i.mi;
+                document.getElementById('s-ce').value = i.ce; document.getElementById('s-tel').value = i.tel; document.getElementById('s-nac').value = i.nac;
+            } else {
+                openSectionModal('modal-contable');
+                document.getElementById('c-fecha').value = i.fecha; document.getElementById('c-concepto').value = i.concepto;
+                document.getElementById('c-debe').value = i.debe; document.getElementById('c-haber').value = i.haber;
+            }
+            alert("⚠️ Modo edición activado.");
+        }
+
+        window.editAporteRow = (id) => {
+            window.editAporteId = id;
+            renderModalTable();
+            alert("⚠️ Editando fila. Cambie los valores y presione 'GUARDAR'.");
+        }
+
+        function updateDatalist() {
+            const list = document.getElementById('lista-socios'); list.innerHTML = '';
+            window.db.socios.forEach(s => { const opt = document.createElement('option'); opt.value = s.mi; opt.innerText = s.nombre; list.appendChild(opt); });
+        }
+
+        function resetForms() { document.getElementById('form-socio').reset(); document.getElementById('form-contable').reset(); window.editId = null; getNextOrder(); }
+        function openModal() { document.getElementById('modalPagos').classList.remove('opacity-0', 'pointer-events-none'); renderModalTable(); }
+        function closeModal() { document.getElementById('modalPagos').classList.add('opacity-0', 'pointer-events-none'); }
+        
+        function renderModalTable() {
+            const f = document.getElementById('modal-search').value.toLowerCase();
+            const b = document.getElementById('modal-body'); b.innerHTML = '';
+            window.db.aportes.filter(a => a.nombre.toLowerCase().includes(f) || a.mi.includes(f)).forEach(a => { 
+                const isEditing = window.editAporteId === a.id;
+                b.innerHTML += `<tr data-id="${a.id}">
+                    <td class="p-4 border font-mono text-gray-400">${a.mi}</td>
+                    <td class="p-4 border uppercase font-bold text-xs">${a.nombre}</td>
+                    <td class="p-4 border text-center">
+                        ${isEditing ? `<input type="date" class="edit-fecha p-1 border rounded" value="${a.fecha}">` : a.fecha}
+                    </td>
+                    <td class="p-4 border text-green-700 font-bold text-right">
+                        ${isEditing ? `<input type="number" class="edit-monto p-1 border rounded w-24 text-right" value="${a.monto}">` : `$ ${a.monto.toFixed(2)}`}
+                    </td>
+                    <td class="p-4 border text-center">
+                        <div class="flex justify-center gap-2">
+                            <button onclick="editAporteRow('${a.id}')" class="btn-icon bg-blue-100 text-blue-600">✏️</button>
+                            <button onclick="deleteItem('aportes', '${a.id}')" class="btn-icon bg-red-100 text-red-600">🗑️</button>
+                        </div>
+                    </td>
+                </tr>`; 
+            });
+        }
+    </script>
+</body>
+</html>
