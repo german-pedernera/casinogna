@@ -112,6 +112,18 @@
             backdrop-filter: blur(4px); padding: 1rem;
         }
         .section-modal.active { display: flex; }
+
+        /* Estilos para el menú móvil */
+        #mobile-menu {
+            transition: all 0.3s ease-in-out;
+            max-height: 0;
+            overflow: hidden;
+        }
+        #mobile-menu.open {
+            max-height: 500px;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen font-sans text-gray-800">
@@ -157,16 +169,30 @@
 
     <div id="main-app" class="hidden-section">
         <nav class="bg-gna text-white p-4 shadow-xl sticky top-0 z-50">
-            <div class="container mx-auto flex justify-between items-center">
-                <div class="flex items-center gap-3">
-                    <img src="/logoEscuadron.jpeg" class="w-10 h-10 rounded-full bg-white">
-                    <span class="font-black uppercase text-xs md:text-sm tracking-widest">Casino de Oficiales</span>
+            <div class="container mx-auto">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <img src="/logoEscuadron.jpeg" class="w-10 h-10 rounded-full bg-white">
+                        <span class="font-black uppercase text-xs md:text-sm tracking-widest">Casino de Oficiales</span>
+                    </div>
+                    
+                    <button id="hamburger-btn" class="md:hidden text-2xl focus:outline-none">
+                        <i class="fas fa-bars"></i>
+                    </button>
+
+                    <div class="hidden md:flex gap-2 items-center">
+                        <button id="btn-calc-toggle-desk" class="bg-yellow-500 text-black px-4 py-2 rounded-xl text-xs font-black uppercase">🧮 Calculadora</button>
+                        <a href="documentacion.html" class="bg-blue-700 text-white px-3 py-2 rounded-xl text-xs font-black uppercase hover:bg-blue-800 transition">📄 Doc</a>
+                        <a href="galeria.html" class="bg-purple-700 text-white px-3 py-2 rounded-xl text-xs font-black uppercase hover:bg-purple-800 transition">🖼️ Galería</a>
+                        <button onclick="location.reload()" class="bg-red-600 px-4 py-2 rounded-xl text-xs font-bold uppercase">Salir</button>
+                    </div>
                 </div>
-                <div class="flex gap-2 items-center">
-                    <button id="btn-calc-toggle" class="bg-yellow-500 text-black px-4 py-2 rounded-xl text-xs font-black">🧮 CALCULADORA</button>
-                    <button onclick="location.reload()" class="bg-red-600 px-4 py-2 rounded-xl text-xs font-bold">SALIR</button>
-                <a href="documentacion.html" class="bg-blue-700 text-white px-3 py-2 rounded-xl text-[10px] md:text-xs font-black uppercase hover:bg-blue-800 transition">📄 Doc</a>
-    <a href="galeria.html" class="bg-purple-700 text-white px-3 py-2 rounded-xl text-[10px] md:text-xs font-black uppercase hover:bg-purple-800 transition">🖼️ Galería</a>
+
+                <div id="mobile-menu" class="md:hidden flex flex-col gap-3 border-t border-white/10 mt-2 hidden">
+                    <button id="btn-calc-toggle-mob" class="w-full bg-yellow-500 text-black px-4 py-3 rounded-xl text-xs font-black uppercase">🧮 Calculadora</button>
+                    <a href="documentacion.html" class="w-full bg-blue-700 text-white px-4 py-3 rounded-xl text-xs font-black uppercase text-center">📄 Documentación</a>
+                    <a href="galeria.html" class="w-full bg-purple-700 text-white px-4 py-3 rounded-xl text-xs font-black uppercase text-center">🖼️ Galería de Fotos</a>
+                    <button onclick="location.reload()" class="w-full bg-red-600 text-white px-4 py-3 rounded-xl text-xs font-black uppercase">Cerrar Sesión</button>
                 </div>
             </div>
         </nav>
@@ -398,6 +424,27 @@
         window.activeType = '';
         let pendingAction = null;
 
+        // --- LÓGICA DE MENÚ HAMBURGUESA ---
+        const hamburgerBtn = document.getElementById('hamburger-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        hamburgerBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            mobileMenu.classList.toggle('open');
+            const icon = hamburgerBtn.querySelector('i');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        });
+
+        // Cerrar menú al hacer clic en enlaces o botones del móvil
+        mobileMenu.querySelectorAll('button, a').forEach(el => {
+            el.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                mobileMenu.classList.remove('open');
+                hamburgerBtn.querySelector('i').className = 'fas fa-bars';
+            });
+        });
+
         // --- SISTEMA DE AUTORIZACIÓN ---
         function requestAuth(action) {
             pendingAction = action;
@@ -592,7 +639,11 @@
         document.getElementById('btn-show-contable').addEventListener('click', () => { closeSectionModal('modal-contable'); showTableSection('contable'); });
         document.getElementById('btn-open-modal').addEventListener('click', openModal);
         document.getElementById('btn-close-modal').addEventListener('click', closeModal);
-        document.getElementById('btn-calc-toggle').addEventListener('click', toggleCalculator);
+        
+        // Asignar toggle de calculadora a ambos botones (escritorio y móvil)
+        document.getElementById('btn-calc-toggle-desk').addEventListener('click', toggleCalculator);
+        document.getElementById('btn-calc-toggle-mob').addEventListener('click', toggleCalculator);
+        
         document.getElementById('calc-clear').addEventListener('click', calcClear);
         document.getElementById('calc-res').addEventListener('click', calcRes);
         document.getElementById('live-filter').addEventListener('input', renderTable);
