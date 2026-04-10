@@ -7,11 +7,12 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* Contenedor principal del botón */
 .whatsapp-btn {
     position: fixed;
-    bottom: 30px;
+    bottom: 15px;
     right: 30px;
     width: 60px;
     height: 60px;
@@ -147,7 +148,7 @@
     <div id="login-section" class="flex items-center justify-center min-h-screen p-4">
         <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md border-t-8 border-green-900 text-center">
             <div class="flex justify-center mb-6">
-                <img src="/logoEscuadron.jpeg" alt="Logo GNA" class="w-24 h-24 rounded-full border-4 border-green-800 object-cover bg-white">
+                <img src="logoEscuadron.jpeg" alt="Logo GNA" class="w-24 h-24 rounded-full border-4 border-green-800 object-cover bg-white">
             </div>
             <h2 class="text-2xl font-black mb-6 uppercase text-gray-700">Sistema Casino Oficiales<br><p>Escuadrón de seguridad vial Santa Catalina</p></h2>
             <div class="space-y-4">
@@ -164,7 +165,7 @@
             <div class="container mx-auto">
                 <div class="flex justify-between items-center">
                     <div class="flex items-center gap-3">
-                        <img src="/logoEscuadron.jpeg" class="w-10 h-10 rounded-full bg-white">
+                        <img src="logoEscuadron.jpeg" class="w-10 h-10 rounded-full bg-white">
                         <span class="font-black uppercase text-xs md:text-sm tracking-widest">Casino de Oficiales</span>
                     </div>
                     
@@ -190,17 +191,6 @@
         </nav>
 
         <main class="container mx-auto p-6">
-            <div>
-
-                <section>
-
-                    
-                </section>
-
-
-
-                
-            </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
                 <div onclick="openSectionModal('modal-registro')" class="card-btn bg-white p-8 rounded-3xl shadow-lg border-b-8 border-blue-600 text-center">
                     <div class="text-5xl mb-4">👤</div>
@@ -230,8 +220,7 @@
                         <textarea id="msg-texto" placeholder="Escriba su propuesta o sugerencia..." class="w-full p-3 border-2 rounded-xl h-32"></textarea>
                         <button id="btn-send-msg" class="w-full bg-purple-700 text-white font-black py-3 rounded-xl hover:bg-purple-800 uppercase">Enviar Propuesta</button>
                     </div>
-                    <div class="lg:col-span-2 space-y-4 max-h-[500px] overflow-y-auto pr-2" id="mensajes-container">
-                        </div>
+                    <div class="lg:col-span-2 space-y-4 max-h-[500px] overflow-y-auto pr-2" id="mensajes-container"></div>
                 </div>
             </section>
 
@@ -309,7 +298,30 @@
                     <input type="number" id="ap-monto" placeholder="Monto $" class="p-3 border-2 rounded-2xl font-black text-green-700 text-xl">
                 </div>
                 <button id="btn-save-aporte" class="w-full bg-green-700 text-white font-black py-4 rounded-2xl shadow-xl uppercase">Registrar y Contabilizar</button>
-                <button id="btn-open-modal" class="w-full bg-purple-700 text-white font-bold py-3 rounded-2xl opacity-80 uppercase text-xs">Planilla de Aportes General</button>
+                <button id="btn-open-modal" class="w-full bg-purple-700 text-white font-black py-4 rounded-2xl opacity-80 uppercase text-xs">Planilla de Aportes General</button>
+                <button onclick="openSectionModal('modal-banco')" class="w-full bg-blue-500 text-white font-black py-4 rounded-2xl shadow-lg uppercase flex items-center justify-center gap-2">
+                    <i class="fas fa-university"></i> Datos de Transferencia
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-banco" class="section-modal">
+        <div class="bg-white w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl border-t-8 border-blue-500">
+            <div class="p-6 text-center">
+                <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                    <i class="fas fa-university"></i>
+                </div>
+                <h3 class="font-black uppercase text-gray-800 mb-4">Información de Pago</h3>
+                <div class="space-y-3 text-left bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                    <p class="text-xs text-gray-500 font-bold uppercase">Titular:</p>
+                    <p class="font-black text-blue-900">Germán Ramírez Pedernera</p>
+                    <p class="text-xs text-gray-500 font-bold uppercase">Alias:</p>
+                    <p class="font-black text-blue-900">profepedernera</p>
+                    <p class="text-xs text-gray-500 font-bold uppercase">CBU:</p>
+                    <p class="font-mono text-sm font-bold text-blue-900 break-all">1430001713020634460010</p>
+                </div>
+                <button onclick="closeSectionModal('modal-banco')" class="mt-6 w-full bg-gray-800 text-white font-bold py-3 rounded-xl uppercase">Cerrar</button>
             </div>
         </div>
     </div>
@@ -333,15 +345,31 @@
                     <input type="number" id="c-haber" placeholder="Egreso (-)" class="p-3 border-2 border-red-200 rounded-xl bg-red-50 font-bold text-red-700">
                     <button type="button" id="btn-save-contable" class="bg-orange-600 text-white font-black py-3 rounded-xl md:col-span-2">GUARDAR REGISTRO</button>
                     <button type="button" id="btn-show-contable" class="bg-gray-800 text-white font-black py-3 rounded-xl md:col-span-2">VER PLANILLA COMPLETA</button>
+                    <button type="button" onclick="openSectionModal('modal-stats')" class="bg-blue-600 text-white font-black py-3 rounded-xl md:col-span-2 uppercase">📊 Estadística</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <div id="calc-section" class="hidden-section fixed bottom-4 right-4 z-[80] p-4 bg-white rounded-3xl shadow-2xl border-4 border-gray-800 w-72">
-        <div class="flex justify-between items-center mb-2">
+    <div id="modal-stats" class="section-modal">
+        <div class="bg-white w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl">
+            <div class="bg-blue-800 p-4 text-white flex justify-between items-center">
+                <h3 class="font-black uppercase">📊 Estadísticas de Movimientos</h3>
+                <button onclick="closeSectionModal('modal-stats')" class="text-2xl font-bold">&times;</button>
+            </div>
+            <div class="p-6">
+                <div class="bg-gray-50 p-4 rounded-2xl border-2 border-gray-100">
+                    <canvas id="statsChart" class="w-full h-[400px]"></canvas>
+                </div>
+                <button onclick="closeSectionModal('modal-stats')" class="mt-6 w-full bg-gray-200 font-bold py-3 rounded-xl uppercase">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="calc-section" class="hidden-section fixed bottom-20 right-10 z-[80] p-4 bg-white rounded-3xl shadow-2xl border-4 border-gray-800 w-72">
+        <div class="flex justify-between items-center mb-6">
             <span class="text-[10px] font-black uppercase text-gray-400">Calculadora</span>
-            <button onclick="toggleCalculator()" class="text-red-600 font-black text-xl px-2 hover:scale-110 transition-transform">&times;</button>
+            <button onclick="toggleCalculator()" class="text-white-600  font-black text-xl px-2 hover:scale-110 transition-transform">&times;</button>
         </div>
         <input type="text" id="calc-display" readonly class="w-full text-right text-2xl p-4 bg-gray-900 text-green-400 rounded-2xl mb-4 font-mono">
         <div class="grid grid-cols-4 gap-2">
@@ -419,6 +447,7 @@
         window.editAporteId = null;
         window.activeType = '';
         let pendingAction = null;
+        let statsChart = null; // Variable para el gráfico
 
         // --- SISTEMA DE AUTORIZACIÓN ---
         function requestAuth(action) {
@@ -458,10 +487,68 @@
                 actualizarResumenContable();
                 getNextOrder();
                 renderMensajes();
+                updateStats(); // Actualizar gráfico al recibir datos
                 if(!document.getElementById('display-section').classList.contains('hidden-section')) renderTable();
                 if(!document.getElementById('modalPagos').classList.contains('opacity-0')) renderModalTable();
             }
         });
+
+        // --- LÓGICA DE ESTADÍSTICA ---
+        function updateStats() {
+            const ctx = document.getElementById('statsChart').getContext('2d');
+            const sortedData = [...window.db.contable].sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+            
+            const totalsByDate = {};
+            sortedData.forEach(item => {
+                if(!totalsByDate[item.fecha]) totalsByDate[item.fecha] = { debe: 0, haber: 0 };
+                totalsByDate[item.fecha].debe += item.debe;
+                totalsByDate[item.fecha].haber += item.haber;
+            });
+
+            const labels = Object.keys(totalsByDate);
+            const dataDebe = labels.map(l => totalsByDate[l].debe);
+            const dataHaber = labels.map(l => totalsByDate[l].haber);
+
+            if (statsChart) statsChart.destroy();
+
+            statsChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'INGRESOS ($)',
+                            data: dataDebe,
+                            borderColor: '#16a34a',
+                            backgroundColor: 'rgba(22, 163, 74, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'EGRESOS ($)',
+                            data: dataHaber,
+                            borderColor: '#dc2626',
+                            backgroundColor: 'rgba(220, 38, 38, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.4,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top', labels: { font: { weight: 'bold' } } }
+                    },
+                    scales: {
+                        y: { beginAtZero: true },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
 
         // --- GESTIÓN DE MENSAJES ---
         window.enviarMensaje = () => {
@@ -688,9 +775,9 @@
         function actualizarResumenContable() {
             let tD = 0; let tH = 0;
             window.db.contable.forEach(i => { tD += parseFloat(i.debe) || 0; tH += parseFloat(i.haber) || 0; });
-            document.getElementById('resumen-debe').innerText = `$ ${tD.toLocaleString()}`;
-            document.getElementById('resumen-haber').innerText = `$ ${tH.toLocaleString()}`;
-            document.getElementById('resumen-neto').innerText = `$ ${(tD - tH).toLocaleString()}`;
+            document.getElementById('resumen-debe').innerText = `$ ${tD.toLocaleString('es-AR')}`;
+            document.getElementById('resumen-haber').innerText = `$ ${tH.toLocaleString('es-AR')}`;
+            document.getElementById('resumen-neto').innerText = `$ ${(tD - tH).toLocaleString('es-AR')}`;
         }
 
         function showTableSection(type) {
@@ -734,12 +821,12 @@
                     b.innerHTML += `<tr class="${i.concepto.includes('CUOTA') ? 'aporte-row' : ''} hover:bg-orange-50">
                         <td class="p-4 border text-[10px] md:text-xs">${i.fecha}</td>
                         <td class="p-4 border uppercase text-[10px] md:text-xs">${i.concepto}</td>
-                        <td class="p-4 border text-green-700 font-bold text-right text-[10px] md:text-xs">$ ${i.debe.toFixed(2)}</td>
-                        <td class="p-4 border text-red-700 font-bold text-right text-[10px] md:text-xs">$ ${i.haber.toFixed(2)}</td>
+                        <td class="p-4 border text-green-700 font-bold text-right text-[10px] md:text-xs">$ ${i.debe.toLocaleString('es-AR')}</td>
+                        <td class="p-4 border text-red-700 font-bold text-right text-[10px] md:text-xs">$ ${i.haber.toLocaleString('es-AR')}</td>
                         <td class="p-4 border text-center"><div class="flex justify-center gap-2"><button onclick="loadEdit('contable', '${i.id}')" class="btn-icon bg-blue-100 text-blue-600">✏️</button><button onclick="deleteItem('contable', '${i.id}')" class="btn-icon bg-red-100 text-red-600">🗑️</button></div></td>
                     </tr>`;
                 });
-                f.innerHTML = `<tr><td colspan="2" class="p-4 text-right text-xs">TOTAL:</td><td class="p-4 text-green-800 text-right font-black text-xs">$ ${tD.toFixed(2)}</td><td class="p-4 text-red-800 text-right font-black text-xs">$ ${tH.toFixed(2)}</td><td class="p-4 text-center text-blue-900 text-[10px]">NETO: $ ${(tD-tH).toFixed(2)}</td></tr>`;
+                f.innerHTML = `<tr><td colspan="2" class="p-4 text-right text-xs">TOTAL:</td><td class="p-4 text-green-800 text-right font-black text-xs">$ ${tD.toLocaleString('es-AR')}</td><td class="p-4 text-red-800 text-right font-black text-xs">$ ${tH.toLocaleString('es-AR')}</td><td class="p-4 text-center text-blue-900 text-[10px]">NETO: $ ${(tD-tH).toLocaleString('es-AR')}</td></tr>`;
             }
         }
 
@@ -786,7 +873,7 @@
                         ${isEditing ? `<input type="date" class="edit-fecha p-1 border rounded text-xs" value="${a.fecha}">` : `<span class="text-xs">${a.fecha}</span>`}
                     </td>
                     <td class="p-4 border text-green-700 font-bold text-right text-xs">
-                        ${isEditing ? `<input type="number" class="edit-monto p-1 border rounded w-20 text-right text-xs" value="${a.monto}">` : `$ ${a.monto.toFixed(2)}`}
+                        ${isEditing ? `<input type="number" class="edit-monto p-1 border rounded w-20 text-right text-xs" value="${a.monto}">` : `$ ${a.monto.toLocaleString('es-AR')}`}
                     </td>
                     <td class="p-4 border text-center">
                         <div class="flex justify-center gap-2">
