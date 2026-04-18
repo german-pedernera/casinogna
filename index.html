@@ -118,6 +118,8 @@
         /* Estilos adicionales para Menú Hamburguesa */
         #mobile-menu { transition: max-height 0.3s ease-out; overflow: hidden; max-height: 0; }
         #mobile-menu.open { max-height: 500px; }
+
+        
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen font-sans text-gray-800">
@@ -176,9 +178,11 @@
 
                     <div class="hidden md:flex gap-2 items-center">
                         <button id="btn-calc-toggle" class="bg-yellow-500 text-black px-4 py-2 rounded-xl text-xs font-black">🧮 CALCULADORA</button>
-                        <button onclick="location.reload()" class="bg-red-600 px-4 py-2 rounded-xl text-xs font-bold">SALIR</button>
                         <a href="documentacion.html" class="bg-blue-700 text-white px-3 py-2 rounded-xl text-[10px] md:text-xs font-black uppercase hover:bg-blue-800 transition">📄 Documentacion</a>
                         <a href="galeria.html" class="bg-purple-700 text-white px-3 py-2 rounded-xl text-[10px] md:text-xs font-black uppercase hover:bg-purple-800 transition">🖼️ Galería</a>
+                        <a href="planillaPago.html" class="bg-green-700 text-white px-3 py-2 rounded-xl text-[10px] md:text-xs font-black uppercase hover:bg-green-800 transition">� Planilla Pagos</a>
+                        <button onclick="location.reload()" class="bg-red-600 px-6 py-2 rounded-xl text-xs font-bold hover:bg-red-600 transition">SALIR</button>
+
                     </div>
                 </div>
 
@@ -189,6 +193,8 @@
                     <button onclick="location.reload()" class="bg-red-600 p-3 rounded-xl text-xs font-black uppercase text-center w-full">Cerrar Sesión</button>
                 </div>
             </div>
+
+            
         </nav>
 
         <main class="container mx-auto p-6">
@@ -217,7 +223,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="space-y-4 bg-purple-50 p-6 rounded-2xl">
                         <input type="number" id="msg-mi" placeholder="Su MI (DNI)" class="w-full p-3 border-2 rounded-xl">
-                        <input type="text" id="msg-ce" placeholder="Su CE (Credencial)" class="w-full p-3 border-2 rounded-xl">
+                        <input type="text" id="msg-ce" placeholder="Su CE (Codigo Estadistico)" class="w-full p-3 border-2 rounded-xl">
                         <textarea id="msg-texto" placeholder="Escriba su propuesta o sugerencia..." class="w-full p-3 border-2 rounded-xl h-32"></textarea>
                         <button id="btn-send-msg" class="w-full bg-purple-700 text-white font-black py-3 rounded-xl hover:bg-purple-800 uppercase">Enviar Propuesta</button>
                     </div>
@@ -803,18 +809,30 @@
             );
 
             if (window.activeType === 'socios') {
-                h.innerHTML = '<th class="p-4">Orden</th><th class="p-4">Nombre</th><th class="p-4">DNI</th><th class="p-4">Nacimiento</th><th class="p-4">Edad</th><th class="p-4 text-center">Gestión</th>';
-                filtered.forEach(i => {
+                h.innerHTML = '<th class="p-4">#</th><th class="p-4">Nombre</th><th class="p-4">DNI</th><th class="p-4">Nacimiento</th><th class="p-4">Edad</th><th class="p-4 text-center">Gestión</th>';
+                
+                // Ordenamos los socios por el campo orden de la base de datos para que la lista sea estable
+                const sortedSocios = filtered.sort((a, b) => (parseInt(a.orden) || 0) - (parseInt(b.orden) || 0));
+
+                let contador = 1; // Variable para el número correlativo real
+                sortedSocios.forEach(i => {
                     b.innerHTML += `<tr class="hover:bg-blue-50">
-                        <td class="p-4 border text-center font-bold">${i.orden}</td>
+                        <td class="p-4 border text-center font-bold text-gray-500">${contador}</td>
                         <td class="p-4 border font-semibold uppercase text-xs md:text-sm">${i.nombre}</td>
                         <td class="p-4 border text-xs md:text-sm">${i.mi}</td>
                         <td class="p-4 border text-center text-xs md:text-sm font-mono text-gray-500">${i.nac || '-'}</td>
                         <td class="p-4 border text-center font-bold text-blue-800 text-xs md:text-sm">${calculateAge(i.nac)}</td>
-                        <td class="p-4 border text-center"><div class="flex justify-center gap-2"><button onclick="loadEdit('socios', '${i.id}')" class="btn-icon bg-blue-100 text-blue-600">✏️</button><button onclick="deleteItem('socios', '${i.id}')" class="btn-icon bg-red-100 text-red-600">🗑️</button></div></td>
+                        <td class="p-4 border text-center">
+                            <div class="flex justify-center gap-2">
+                                <button onclick="loadEdit('socios', '${i.id}')" class="btn-icon bg-blue-100 text-blue-600">✏️</button>
+                                <button onclick="deleteItem('socios', '${i.id}')" class="btn-icon bg-red-100 text-red-600">🗑️</button>
+                            </div>
+                        </td>
                     </tr>`;
+                    contador++; // Incrementamos para el siguiente socio
                 });
             } else {
+                // ... (El código de la sección contable se mantiene igual que ya tienes)
                 h.innerHTML = '<th class="p-4">Fecha</th><th class="p-4">Concepto</th><th class="p-4">Ingreso</th><th class="p-4">Egreso</th><th class="p-4 text-center">Gestión</th>';
                 let tD = 0, tH = 0;
                 filtered.sort((a,b) => new Date(b.fecha) - new Date(a.fecha)).forEach(i => {

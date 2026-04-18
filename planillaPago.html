@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión y Balance de Pagos - GNA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .bg-gna { background-color: #1b4332; }
+        .hidden-section { display: none !important; }
+        .sticky-col { position: sticky; left: 0; background-color: white; z-index: 10; border-right: 2px solid #e5e7eb; }
+        input[type="number"]::-webkit-inner-spin-button { display: none; }
+        .read-only-input { pointer-events: none; border: none; background: transparent; }
+        @media print { .no-print { display: none; } }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+    <div id="login-admin" class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md border-t-8 border-green-900 text-center">
+            <h2 class="text-xl font-black mb-6 uppercase text-gray-700">Sistema de Planilla<br><span class="text-xs text-green-700">Escuadrón Santa Catalina</span></h2>
+            <div class="space-y-4">
+                <input type="text" id="adm-user" placeholder="Usuario / MI (DNI)" class="w-full p-4 border-2 rounded-2xl outline-none focus:border-green-800">
+                <input type="password" id="adm-pass" placeholder="Clave / CE" class="w-full p-4 border-2 rounded-2xl outline-none focus:border-green-800">
+                <button id="btn-entrar" class="w-full bg-green-800 text-white font-bold py-4 rounded-2xl shadow-xl hover:bg-green-900 transition uppercase">Ingresar</button>
+            </div>
+            <p id="error-login" class="text-red-500 font-bold mt-4 hidden text-xs">⚠️ Credenciales incorrectas</p>
+        </div>
+    </div>
+
+    <div id="app-content" class="hidden-section">
+        <nav class="bg-gna text-white p-4 shadow-xl sticky top-0 z-50 no-print">
+            <div class="container mx-auto flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <img src="logoEscuadron.jpeg" class="w-10 h-10 rounded-full border-2 border-white object-cover">
+                    <span id="role-label" class="font-black uppercase text-[10px] md:text-xs">Visualización de Pagos</span>
+                </div>
+                <div class="flex gap-2">
+                    <button id="btn-save-all" class="admin-only hidden bg-yellow-500 text-black px-4 py-2 rounded-xl text-[10px] font-black uppercase shadow-lg hover:bg-yellow-400">
+                        <i class="fas fa-save mr-1"></i> Guardar Cambios
+                    </button>
+                    <button onclick="descargarPDF()" class="bg-blue-600 px-3 py-2 rounded-xl text-[10px] font-black uppercase shadow-lg hover:bg-blue-700">
+                        <i class="fas fa-file-pdf mr-1"></i> Descargar Planilla
+                    </button>
+                    <a href="index.html" class="bg-red-600 px-3 py-2 rounded-xl text-[10px] font-black uppercase shadow-lg">Salir</a>
+                </div>
+            </div>
+        </nav>
+
+        <main class="p-4 md:p-8">
+            <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-200">
+                <div class="p-6 bg-white border-b flex flex-col md:flex-row justify-between items-center gap-4">
+                    <h2 class="text-xl font-black text-gray-800 uppercase italic">Edición y Balance Mensual</h2>
+                    <input type="text" id="filtro" placeholder="🔍 Buscar socio..." class="p-3 border-2 rounded-2xl text-sm w-full md:w-64 no-print outline-none focus:border-green-600">
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse" id="tabla-maestra">
+                        <thead>
+                            <tr class="bg-gray-900 text-white text-[9px] uppercase tracking-wider text-center">
+                                <th class="p-4 text-left sticky-col bg-gray-900"># - Socio</th>
+                                <th class="p-2 border-l border-gray-700">Ene</th>
+                                <th class="p-2 border-l border-gray-700">Feb</th>
+                                <th class="p-2 border-l border-gray-700">Mar</th>
+                                <th class="p-2 border-l border-gray-700">Abr</th>
+                                <th class="p-2 border-l border-gray-700">May</th>
+                                <th class="p-2 border-l border-gray-700">Jun</th>
+                                <th class="p-2 border-l border-gray-700">Jul</th>
+                                <th class="p-2 border-l border-gray-700">Ago</th>
+                                <th class="p-2 border-l border-gray-700">Sep</th>
+                                <th class="p-2 border-l border-gray-700">Oct</th>
+                                <th class="p-2 border-l border-gray-700">Nov</th>
+                                <th class="p-2 border-l border-gray-700">Dic</th>
+                                <th class="admin-only hidden p-2 bg-red-900 border-l border-gray-700 no-print text-center">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="body-admin" class="text-[10px]"></tbody>
+                        <tfoot class="bg-gray-100 font-black text-gray-800 text-[9px] uppercase border-t-2 border-gray-300">
+                            <tr id="fila-totales">
+                                <td class="p-4 sticky-col bg-gray-100 border-r-2 text-left">SUBTOTALES MENSUALES</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div class="p-8 bg-gray-50 border-t-4 border-green-900">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-lg font-black text-gray-800 uppercase italic flex items-center gap-2">
+                            <i class="fas fa-calculator text-green-700"></i> Resumen de Caja y Cierre de Ejercicio
+                        </h3>
+                        <button id="btn-add-ajuste" onclick="agregarAjuste()" class="admin-only hidden bg-green-700 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase hover:bg-green-800 shadow-md">
+                            <i class="fas fa-plus mr-1"></i> Agregar Concepto
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8" id="contenedor-ajustes"></div>
+
+                    <div class="bg-green-900 p-6 rounded-3xl shadow-2xl border-l-8 border-green-400 flex justify-between items-center">
+                        <div>
+                            <p class="text-green-300 text-[10px] font-bold uppercase tracking-widest">Saldo Final Proyectado (Caja)</p>
+                            <h4 class="text-4xl font-black text-white" id="total-final-balance">$ 0</h4>
+                        </div>
+                        <i class="fas fa-vault text-white/20 text-5xl"></i>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+        import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBUF4GHEl4jTr_t7Au1BHDZy6j7eXpw7MY",
+            authDomain: "casinossoo.firebaseapp.com",
+            databaseURL: "https://casinossoo-default-rtdb.firebaseio.com",
+            projectId: "casinossoo",
+            storageBucket: "casinossoo.firebasestorage.app",
+            messagingSenderId: "795140491884",
+            appId: "1:795140491884:web:00832b94a34e32ab0be649"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let isAdmin = false;
+        let localSocios = {};
+        let localAportes = {};
+        let localAjustes = [];
+        const year = 2026;
+
+        document.getElementById('btn-entrar').addEventListener('click', () => {
+            const u = document.getElementById('adm-user').value;
+            const p = document.getElementById('adm-pass').value;
+            if (u === 'Ger25' && p === 'Emi25') { isAdmin = true; } 
+            else {
+                const socio = Object.values(localSocios).find(s => s.mi === u && s.ce === p);
+                if (!socio) { document.getElementById('error-login').classList.remove('hidden'); return; }
+                isAdmin = false;
+            }
+            aplicarPermisos();
+            document.getElementById('login-admin').classList.add('hidden-section');
+            document.getElementById('app-content').classList.remove('hidden-section');
+        });
+
+        function aplicarPermisos() {
+            document.querySelectorAll('.admin-only').forEach(el => isAdmin ? el.classList.remove('hidden') : el.classList.add('hidden'));
+            document.getElementById('role-label').innerText = isAdmin ? "Gestión Administrativa" : "Consulta de Socio";
+            renderPlanilla();
+        }
+
+        onValue(ref(db, 'gna'), (snap) => {
+            const data = snap.val();
+            if(data) {
+                localSocios = data.socios || {};
+                localAportes = data.aportes || {};
+                localAjustes = data.ajustesBalance || [];
+                renderPlanilla();
+            }
+        });
+
+        function renderPlanilla() {
+            const body = document.getElementById('body-admin');
+            const filtro = document.getElementById('filtro').value.toLowerCase();
+            body.innerHTML = '';
+            const totalesPorMes = Array(12).fill(0);
+            let total2026 = 0;
+            let contador = 1;
+
+            Object.keys(localSocios).sort((a,b) => localSocios[a].orden - localSocios[b].orden).forEach(key => {
+                const s = localSocios[key];
+                if(!s.nombre.toLowerCase().includes(filtro)) return;
+
+                let row = `<tr class="border-b hover:bg-gray-50 transition-colors">
+                    <td class="p-2 sticky-col bg-white shadow-sm flex items-center gap-2">
+                        <span class="text-gray-400 font-bold">${contador}.</span>
+                        <div class="w-full">
+                            <input type="text" onchange="localSocios['${key}'].jerarquia = this.value.toUpperCase()" value="${s.jerarquia}" class="${isAdmin ? '' : 'read-only-input'} w-full text-[8px] text-blue-700 font-bold border-none bg-transparent uppercase outline-none">
+                            <input type="text" onchange="localSocios['${key}'].nombre = this.value.toUpperCase()" value="${s.nombre}" class="${isAdmin ? '' : 'read-only-input'} w-full font-black border-none bg-transparent uppercase outline-none">
+                        </div>
+                    </td>`;
+
+                for (let m = 0; m < 12; m++) {
+                    const apKey = Object.keys(localAportes).find(k => {
+                        const d = new Date(localAportes[k].fecha + "T00:00:00");
+                        return localAportes[k].mi === s.mi && d.getMonth() === m && d.getFullYear() === year;
+                    });
+                    if(apKey) {
+                        const monto = parseFloat(localAportes[apKey].monto) || 0;
+                        totalesPorMes[m] += monto;
+                        total2026 += monto;
+                        row += `<td class="p-1 border-l text-center"><input type="number" onchange="localAportes['${apKey}'].monto = parseFloat(this.value); renderPlanilla()" value="${monto}" class="${isAdmin ? 'border bg-green-50/50' : 'read-only-input'} w-14 p-1 rounded text-center font-bold text-green-700 outline-none"></td>`;
+                    } else {
+                        row += `<td class="p-1 border-l text-center text-gray-300">${isAdmin ? `<button onclick="nuevoAporteLocal('${s.mi}', ${m})">+</button>` : '-'}</td>`;
+                    }
+                }
+                if(isAdmin) row += `<td class="p-2 border-l text-center no-print"><button onclick="eliminarSocioLocal('${key}')" class="text-red-400"><i class="fas fa-trash-alt"></i></button></td>`;
+                body.innerHTML += row;
+                contador++;
+            });
+
+            const filaT = document.getElementById('fila-totales');
+            filaT.innerHTML = `<td class="p-4 sticky-col bg-gray-100 border-r-2 text-left">SUBTOTALES MENSUALES</td>`;
+            totalesPorMes.forEach(t => filaT.innerHTML += `<td class="p-2 border-l text-center">$${t.toLocaleString('es-AR')}</td>`);
+            renderBalance(total2026);
+        }
+
+        function renderBalance(total2026) {
+            const cont = document.getElementById('contenedor-ajustes');
+            cont.innerHTML = `
+                <div class="bg-white p-4 rounded-2xl shadow-sm border-l-4 border-blue-500"><p class="text-gray-500 text-[10px] font-bold uppercase tracking-widest">Aportes ${year}</p><p class="text-2xl font-black text-gray-800" id="total-2026">$ ${total2026.toLocaleString('es-AR')}</p></div>`;
+            
+            let sumaAjustes = 0;
+            localAjustes.forEach((aj, i) => {
+                sumaAjustes += aj.monto;
+                cont.innerHTML += `
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border-l-4 ${aj.monto < 0 ? 'border-red-500' : 'border-purple-500'} relative group">
+                        <p class="text-gray-500 text-[10px] font-bold uppercase tracking-widest">${aj.concepto}</p><p class="text-2xl font-black ${aj.monto < 0 ? 'text-red-600' : 'text-purple-700'}">$ ${aj.monto.toLocaleString('es-AR')}</p>
+                        ${isAdmin ? `<button onclick="quitarAjuste(${i})" class="absolute top-2 right-2 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 no-print"><i class="fas fa-times-circle"></i></button>` : ''}
+                    </div>`;
+            });
+            document.getElementById('total-final-balance').innerText = `$ ${(total2026 + sumaAjustes).toLocaleString('es-AR')}`;
+        }
+
+        window.nuevoAporteLocal = (mi, mes) => {
+            const m = prompt("Monto:");
+            if(m) {
+                const id = "AP" + Date.now();
+                localAportes[id] = { id, mi, monto: parseFloat(m), fecha: `${year}-${String(mes+1).padStart(2,'0')}-01`, nombre: "Manual" };
+                renderPlanilla();
+            }
+        };
+
+        window.agregarAjuste = () => {
+            const n = prompt("Concepto:"); const v = prompt("Monto (use '-' para restas):");
+            if(n && v) { localAjustes.push({ concepto: n.toUpperCase(), monto: parseFloat(v) }); renderPlanilla(); }
+        };
+
+        window.quitarAjuste = (i) => { localAjustes.splice(i, 1); renderPlanilla(); };
+        window.eliminarSocioLocal = (key) => { if(confirm("¿Eliminar socio?")) { delete localSocios[key]; renderPlanilla(); } };
+
+        document.getElementById('btn-save-all').addEventListener('click', () => {
+            if(confirm("¿Sincronizar cambios con Firebase?")) {
+                set(ref(db, 'gna/socios'), localSocios);
+                set(ref(db, 'gna/aportes'), localAportes);
+                set(ref(db, 'gna/ajustesBalance'), localAjustes).then(() => alert("✅ Datos actualizados."));
+            }
+        });
+
+        window.descargarPDF = () => {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('landscape');
+            doc.setFontSize(16); doc.setFont(undefined, 'bold');
+            doc.text(`ESC. SEG. VIAL SANTA CATALINA - BALANCE ${year}`, 14, 15);
+            doc.autoTable({
+                html: '#tabla-maestra', startY: 25, theme: 'grid', styles: { fontSize: 7, cellPadding: 1 },
+                headStyles: { fillColor: [27, 67, 50] },
+                didParseCell: (data) => {
+                    if (data.cell.raw && data.cell.raw.querySelectorAll) {
+                        const inputs = data.cell.raw.querySelectorAll('input');
+                        if (inputs.length > 1) { 
+                            const nro = data.cell.raw.querySelector('span')?.innerText || "";
+                            data.cell.text = `${nro} ${inputs[0].value} ${inputs[1].value}`; 
+                        }
+                        else if (inputs.length === 1) data.cell.text = `$ ${parseFloat(inputs[0].value).toLocaleString('es-AR')}`;
+                    }
+                }
+            });
+            const finalY = doc.lastAutoTable.finalY + 15;
+            doc.setFontSize(10); doc.text("RESUMEN DE CAJA:", 14, finalY);
+            doc.setFontSize(9); doc.setFont(undefined, 'normal');
+            doc.text(`Aportes Recaudados: ${document.getElementById('total-2026').innerText}`, 14, finalY + 8);
+            let off = 14;
+            localAjustes.forEach(aj => { doc.text(`${aj.monto >= 0 ? '(+)' : '(-)'} ${aj.concepto}: $ ${aj.monto.toLocaleString('es-AR')}`, 14, finalY + off); off += 6; });
+            doc.setFont(undefined, 'bold');
+            doc.text(`SALDO FINAL: ${document.getElementById('total-final-balance').innerText}`, 14, finalY + off + 4);
+            doc.save(`Descarga_Planilla_${year}.pdf`);
+        };
+
+        document.getElementById('filtro').addEventListener('input', renderPlanilla);
+    </script>
+</body>
+</html>
