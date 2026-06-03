@@ -19,7 +19,7 @@ const Login = ({ onLogin }) => {
     e.preventDefault();
     // Validar administradores hardcodeados
     const admins = [
-      { user: import.meta.env.VITE_ADMIN_USER || 'admin', pass: import.meta.env.VITE_ADMIN_PASS || 'admin' }
+      { user: import.meta.env.VITE_ADMIN_USER || 'Ger25$', pass: import.meta.env.VITE_ADMIN_PASS || 'Emi25$' }
     ];
 
     const isAdmin = admins.find(a => a.user === mi && a.pass === ce);
