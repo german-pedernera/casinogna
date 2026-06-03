@@ -281,11 +281,11 @@ const PanelPrincipal = ({ user }) => {
                   </div>
                   <p style={{ color: '#333', marginBottom: '15px', whiteSpace: 'pre-wrap' }}>{p.propuesta}</p>
                   
-                  <div className="d-flex align-items-center justify-content-between flex-wrap gap-3">
-                    <div className="d-flex align-items-center gap-3 flex-wrap">
+                  <div className="d-flex align-items-center justify-content-between flex-wrap gap-3 flex-column-mobile">
+                    <div className="d-flex align-items-stretch gap-2 flex-column-mobile w-100">
                       <button 
                         onClick={() => handleVote(p.id, p.votos, 'acuerdo')}
-                        className="btn btn-sm d-flex align-items-center justify-content-center gap-2"
+                        className="btn btn-sm d-flex align-items-center justify-content-center gap-2 btn-mobile-full"
                         style={{ 
                           cursor: yaVoto ? 'default' : 'pointer',
                           backgroundColor: votoUsuario?.voto === 'acuerdo' ? '#e8f4f0' : 'transparent',
@@ -300,7 +300,7 @@ const PanelPrincipal = ({ user }) => {
 
                       <button 
                         onClick={() => handleVote(p.id, p.votos, 'desacuerdo')}
-                        className="btn btn-sm d-flex align-items-center justify-content-center gap-2"
+                        className="btn btn-sm d-flex align-items-center justify-content-center gap-2 btn-mobile-full"
                         style={{ 
                           cursor: yaVoto ? 'default' : 'pointer',
                           backgroundColor: votoUsuario?.voto === 'desacuerdo' ? '#fdf2f2' : 'transparent',
@@ -316,7 +316,7 @@ const PanelPrincipal = ({ user }) => {
                       {yaVoto && <span style={{ fontSize: '0.85rem', color: '#666', fontWeight: 'bold' }}>¡Gracias por votar!</span>}
                     </div>
 
-                    <div className="d-flex align-items-center">
+                    <div className="d-flex align-items-center justify-content-center w-100 mt-2">
                       <PieChart width={80} height={80}>
                         <Pie
                           data={dataPie}
