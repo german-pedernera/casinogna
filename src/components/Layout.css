@@ -1,0 +1,544 @@
+.layout-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.navbar {
+  height: 76px;
+  background-color: var(--white);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.circle-logo-small {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: var(--white);
+  background-image: url('/santa_catalina_logo.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  animation: floatSmall 4s ease-in-out infinite;
+}
+
+@keyframes floatSmall {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+  100% { transform: translateY(0px); }
+}
+
+.navbar-title {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  color: var(--primary-green);
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+}
+
+.navbar-user {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.user-info {
+  font-size: 0.95rem;
+  color: var(--text-dark);
+}
+
+.sidebar .user-info {
+  color: var(--white);
+}
+
+.menu-toggle {
+  background: none;
+  padding: 8px;
+  color: var(--text-dark);
+}
+
+.main-layout {
+  display: flex;
+  flex: 1;
+  position: relative;
+}
+
+.sidebar {
+  width: 310px;
+  background-color: var(--primary-color);
+  border-right: none;
+  padding: 32px 0;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* Increased gap to give margin between buttons */
+  padding: 0 16px;
+  flex: 1;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 20px;
+  border-radius: var(--radius-sm);
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  transition: var(--transition);
+  background: transparent;
+  border: none;
+  border-left: 4px solid transparent;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+  width: 100%;
+}
+
+.nav-link:hover {
+  background-color: var(--secondary-color);
+  color: var(--white);
+}
+
+.nav-link.active {
+  background-color: var(--accent-color);
+  color: var(--white);
+  border-left: 4px solid var(--accent-light);
+}
+
+.btn-logout {
+  color: #ff8787;
+}
+
+.btn-logout:hover {
+  background-color: rgba(255, 135, 135, 0.1);
+  color: #ff6b6b;
+}
+
+/* Animated Button Uiverse Style for Sidebar Navigation (Compact & Responsive) */
+.animated-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px; /* Compact padding */
+  border: 3px solid transparent; /* Thinner border */
+  font-size: 14px; /* Compact font size */
+  background-color: transparent;
+  border-radius: 100px;
+  font-weight: 600;
+  color: white;
+  box-shadow: 0 0 0 2px white;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  width: 100%;
+  box-sizing: border-box;
+  text-decoration: none;
+  font-family: 'Outfit', sans-serif;
+}
+
+.animated-button svg.arr-1,
+.animated-button svg.arr-2 {
+  position: absolute;
+  width: 18px; /* Compact arrow size */
+  fill: white;
+  z-index: 9;
+  transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.animated-button .arr-1 {
+  right: 16px;
+}
+
+.animated-button .arr-2 {
+  left: -25%;
+}
+
+.animated-button .circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
+  background-color: white;
+  border-radius: 50%;
+  opacity: 0;
+  transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.animated-button .text {
+  position: relative;
+  z-index: 1;
+  transform: translateX(0);
+  transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.animated-button:hover {
+  box-shadow: 0 0 0 10px transparent;
+  color: #212121;
+  border-radius: 10px;
+}
+
+.animated-button:hover .arr-1 {
+  right: -25%;
+}
+
+.animated-button:hover .arr-2 {
+  left: 16px;
+}
+
+.animated-button:hover .text {
+  transform: translateX(26px); /* Adjusted translation for smaller arrow */
+}
+
+.animated-button:hover svg.arr-1,
+.animated-button:hover svg.arr-2 {
+  fill: #212121;
+}
+
+.animated-button:active {
+  scale: 0.98;
+  box-shadow: 0 0 0 3px white;
+}
+
+.animated-button:hover .circle {
+  width: 340px;
+  height: 340px;
+  opacity: 1;
+}
+
+/* Active Page State */
+.animated-button.active {
+  background-color: white;
+  color: #212121;
+  box-shadow: 0 0 0 2px white;
+  border-radius: 10px;
+}
+
+.animated-button.active .arr-1 {
+  right: -25%;
+}
+
+.animated-button.active .arr-2 {
+  left: 16px;
+}
+
+.animated-button.active .text {
+  transform: translateX(26px);
+}
+
+.animated-button.active svg.arr-1,
+.animated-button.active svg.arr-2 {
+  fill: #212121;
+}
+
+body.dark-theme .animated-button.active {
+  color: #003366 !important;
+}
+
+body.dark-theme .animated-button.active svg.arr-1,
+body.dark-theme .animated-button.active svg.arr-2 {
+  fill: #003366 !important;
+}
+
+
+/* Logout Button variation (White outline & text, Red hover circle) */
+.animated-button.btn-logout {
+  color: #ffffff;
+  box-shadow: 0 0 0 2px #ffffff;
+}
+
+.animated-button.btn-logout svg.arr-1,
+.animated-button.btn-logout svg.arr-2 {
+  fill: #ffffff;
+}
+
+.animated-button.btn-logout .circle {
+  background-color: #ff6b6b;
+}
+
+.animated-button.btn-logout:hover {
+  color: #ffffff;
+  box-shadow: 0 0 0 10px transparent;
+}
+
+.animated-button.btn-logout:hover svg.arr-1,
+.animated-button.btn-logout:hover svg.arr-2 {
+  fill: #ffffff;
+}
+
+.animated-button.btn-logout:active {
+  box-shadow: 0 0 0 3px #ffffff;
+}
+
+/* Responsive Media Queries for Mobile/Cellular screens */
+@media (max-width: 768px) {
+  .nav-list {
+    gap: 8px; /* Slightly tighter gap on mobile screens */
+  }
+  .animated-button {
+    padding: 8px 12px; /* Extra compact on mobile */
+    font-size: 13px;
+    border-radius: 100px;
+  }
+  .animated-button svg.arr-1,
+  .animated-button svg.arr-2 {
+    width: 16px;
+  }
+  .animated-button .arr-1 {
+    right: 12px;
+  }
+  .animated-button:hover .arr-2,
+  .animated-button.active .arr-2 {
+    left: 12px;
+  }
+  .animated-button:hover .text,
+  .animated-button.active .text {
+    transform: translateX(22px);
+  }
+  .animated-button:hover {
+    border-radius: 8px;
+  }
+  .animated-button.active {
+    border-radius: 8px;
+  }
+}
+
+.content {
+  flex: 1;
+  padding: 40px;
+  background-color: var(--bg-color);
+  overflow-y: auto;
+}
+
+.mobile-only {
+  display: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0 20px;
+  }
+  
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1005; /* Se abre por encima de todo */
+    transform: translateX(-100%);
+    box-shadow: var(--shadow-lg);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch; /* Desplazamiento ultra suave en iOS */
+    display: flex;
+    flex-direction: column;
+    background-color: var(--primary-color);
+    padding: 0; /* Reiniciamos padding para mobile */
+    padding-bottom: 32px;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .d-none-mobile {
+    display: none;
+  }
+
+  .mobile-only {
+    display: block;
+  }
+
+  .sidebar-mobile-header {
+    padding: 24px 20px 20px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 20px;
+  }
+
+  .content {
+    padding: 24px 16px;
+  }
+
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1004; /* Justo debajo del sidebar */
+  }
+}
+
+@media (min-width: 769px) {
+  .menu-toggle {
+    display: none !important;
+  }
+}
+
+.layout-enter {
+  opacity: 1;
+}
+
+.layout-exit {
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+}
+
+/* WhatsApp Floating Button */
+.whatsapp-float {
+  position: fixed;
+  width: 60px;
+  height: 60px;
+  bottom: 40px;
+  right: 40px;
+  background-color: #25d366;
+  color: #FFF;
+  border-radius: 50px;
+  text-align: center;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.whatsapp-float:hover {
+  transform: scale(1.1);
+  box-shadow: 2px 2px 15px rgba(37, 211, 102, 0.5);
+  color: #FFF;
+}
+
+.whatsapp-float svg {
+  width: 35px;
+  height: 35px;
+  fill: currentColor;
+}
+
+@media (max-width: 768px) {
+  .whatsapp-float {
+    width: 50px;
+    height: 50px;
+    bottom: 20px;
+    right: 20px;
+  }
+  .whatsapp-float svg {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+/* Settings Menu Dropdown styling */
+.settings-menu-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-icon-btn {
+  color: var(--text-light);
+  cursor: pointer;
+  transition: transform 0.5s ease, color 0.3s ease;
+  margin-right: 20px; /* Separation from name/rank */
+}
+
+.settings-icon-btn:hover {
+  color: var(--primary-green);
+  transform: rotate(45deg);
+}
+
+.settings-dropdown {
+  position: absolute;
+  top: 48px;
+  right: 0;
+  background-color: var(--white);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  padding: 16px;
+  min-width: 240px;
+  z-index: 1000;
+  animation: dropdownFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+body.dark-theme .settings-dropdown {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.settings-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  color: var(--text-dark);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 10px 16px;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: left;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.settings-action-btn:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+  border-color: var(--primary-green);
+  color: var(--primary-green);
+}
+
+body.dark-theme .settings-action-btn {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--white);
+}
+
+body.dark-theme .settings-action-btn:hover {
+  background-color: rgba(255, 255, 255, 0.04);
+  border-color: var(--primary-green);
+  color: var(--primary-green);
+}

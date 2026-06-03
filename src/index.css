@@ -1,0 +1,816 @@
+:root {
+  /* Nueva Paleta (Azul y Naranja) */
+  --primary-color: #1b4b6b;
+  --secondary-color: #2c6287;
+  --accent-color: #d66436;
+  --accent-light: #f5dbce;
+  --light-blue: #eef2f5;
+  
+  /* Grises y Texto */
+  --text-dark: #192734;
+  --text-light: #5a6b7c;
+  --bg-color: #e6f9ed;
+  --white: #FFFFFF;
+  --danger: #E74C3C;
+  --danger-light: #FDEDEC;
+  --primary-green: #198754;
+  --light-bg: #f8f9fa;
+  --border-color: #eee;
+
+  /* Elevaciones (Sombras) */
+  --shadow-sm: 0 4px 6px rgba(27, 75, 107, 0.05);
+  --shadow-md: 0 10px 20px rgba(27, 75, 107, 0.1);
+  --shadow-lg: 0 20px 40px rgba(27, 75, 107, 0.15);
+  
+  /* Bordes */
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-full: 9999px;
+  
+  /* Transiciones */
+  --transition: all 0.2s ease-in-out;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-dark);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+
+/* Typography Modernizada */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  color: var(--primary-color);
+  letter-spacing: -0.02em;
+}
+
+/* Animaciones Fluidas */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slowFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Inputs de Alta Calidad */
+input, textarea, select {
+  width: 100%;
+  padding: 14px 20px;
+  border: 1px solid #cbd5e1;
+  background-color: #F2F4F4;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-family: 'Inter', sans-serif;
+  color: var(--text-dark);
+  transition: var(--transition);
+  outline: none;
+}
+
+input::placeholder, textarea::placeholder {
+  color: #AAB7B8;
+}
+
+input:focus, textarea:focus, select:focus {
+  background-color: var(--white);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 4px rgba(214, 100, 54, 0.15);
+}
+
+/* Botones con Micro-animaciones y Estilo Neumórfico de Uiverse.io */
+button:not(.menu-toggle):not(.nav-link):not(.carousel-btn):not(.whatsapp-support-btn):not(.whatsapp-float):not(.install-prompt-btn-close):not(.install-prompt-btn-primary):not(.admin-tab):not(.animated-button):not(.lightbox-close-btn),
+.btn:not(.menu-toggle):not(.nav-link):not(.carousel-btn):not(.whatsapp-support-btn):not(.whatsapp-float):not(.install-prompt-btn-close):not(.install-prompt-btn-primary):not(.admin-tab):not(.animated-button):not(.lightbox-close-btn) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  gap: 8px;
+  color: #090909;
+  padding: 0.7em 1.7em;
+  font-size: 18px;
+  border-radius: 0.5em;
+  background: #e8e8e8;
+  cursor: pointer;
+  border: 1px solid #e8e8e8;
+  transition: all 0.3s;
+  box-shadow: 6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff;
+  text-decoration: none;
+}
+
+button:not(.menu-toggle):not(.nav-link):not(.carousel-btn):not(.whatsapp-support-btn):not(.whatsapp-float):not(.install-prompt-btn-close):not(.install-prompt-btn-primary):not(.admin-tab):not(.animated-button):not(.lightbox-close-btn):active,
+.btn:not(.menu-toggle):not(.nav-link):not(.carousel-btn):not(.whatsapp-support-btn):not(.whatsapp-float):not(.install-prompt-btn-close):not(.install-prompt-btn-primary):not(.admin-tab):not(.animated-button):not(.lightbox-close-btn):active {
+  color: #666;
+  box-shadow: inset 4px 4px 12px #c5c5c5, inset -4px -4px 12px #ffffff;
+}
+
+/* Modificamos los estilos variantes para que hereden el look base pero sigan existiendo sin sobreescribir la neumorfia */
+.btn-primary, .btn-secondary, .btn-danger, .btn-success, .btn-warning, .btn-outline-danger {
+  /* Mantienen el estilo base de arriba */
+}
+
+/* Permitir que botones pequeños en tablas o paneles mantengan su tamaño menor mediante clases o selectores de tamaño */
+.btn-sm {
+  font-size: 14px !important;
+  padding: 0.4em 0.8em !important;
+}
+
+/* Tarjetas (Glassmorphism sutil) */
+.card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* Tablas Modernas */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+thead th {
+  font-family: 'Outfit', sans-serif;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  color: var(--white);
+  background-color: var(--primary-color);
+  padding: 16px;
+  border-bottom: 2px solid var(--secondary-color);
+}
+
+thead th:first-child {
+  border-top-left-radius: var(--radius-sm);
+}
+
+thead th:last-child {
+  border-top-right-radius: var(--radius-sm);
+}
+
+tbody tr {
+  transition: var(--transition);
+}
+
+tbody tr:hover {
+  background-color: var(--light-blue);
+}
+
+tbody td {
+  padding: 16px;
+  border-bottom: 1px solid #EAEDED;
+  color: var(--text-dark);
+}
+
+/* Utilities */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.text-center { text-align: center; }
+.text-light { color: var(--text-light); }
+.mt-4 { margin-top: 1.5rem; }
+.mb-4 { margin-bottom: 1.5rem; }
+.d-flex { display: flex; }
+.flex-column { flex-direction: column; }
+.align-items-center { align-items: center; }
+.justify-content-center { justify-content: center; }
+.justify-content-between { justify-content: space-between; }
+.gap-2 { gap: 0.5rem; }
+.gap-3 { gap: 1rem; }
+.gap-4 { gap: 1.5rem; }
+.position-relative { position: relative; }
+.position-absolute { position: absolute; }
+
+/* Responsive Utilities */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 768px) {
+  .flex-column-mobile {
+    flex-direction: column !important;
+  }
+  
+  .card {
+    padding: 20px;
+  }
+  
+  .btn-mobile-full {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+  
+  .w-mobile-100 {
+    width: 100% !important;
+    max-width: none !important;
+  }
+}
+
+/* Botón Soporte WhatsApp */
+.whatsapp-support-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #25D366;
+  color: white;
+  border-radius: 30px;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  z-index: 1000;
+  text-decoration: none;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.whatsapp-support-btn:hover {
+  transform: scale(1.05);
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .whatsapp-support-btn {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 350px;
+  }
+  .whatsapp-support-btn:hover {
+    transform: translateX(-50%) scale(1.05);
+  }
+}
+
+/* Floating Save Panel */
+.floating-save-panel {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: white;
+  padding: 15px 25px;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  border: 2px solid var(--primary-green, #198754);
+  z-index: 9999;
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  animation: slideUp 0.3s ease-out;
+}
+
+.floating-save-panel .title-text {
+  font-weight: 600;
+  color: var(--primary-green, #198754);
+  font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+  .floating-save-panel {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: calc(100% - 40px);
+    max-width: 600px;
+    padding: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .floating-save-panel .title-text {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 5px;
+  }
+  
+  .floating-save-panel .btn {
+    flex-grow: 1;
+  }
+}
+
+/* Maintenance Admin Status Card */
+.maintenance-card-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.maintenance-card-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1 1 300px;
+}
+
+.maintenance-card-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f8f9fa;
+  padding: 10px 20px;
+  border-radius: 50px;
+  border: 1px solid #e9ecef;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.maintenance-card-right:hover {
+  background: #e9ecef;
+}
+
+@media (max-width: 576px) {
+  .maintenance-card-content {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+  
+  .maintenance-card-left {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 12px;
+  }
+  
+  .maintenance-card-right {
+    justify-content: center;
+    width: 100%;
+    margin-top: 5px;
+  }
+}
+
+/* ==========================================
+   Day/Night Gooey Toggle & Dark Mode System
+   ========================================== */
+
+/* Dark Mode Palette overrides */
+/* Dark Mode Palette overrides */
+body.dark-theme {
+  --primary-color: #0d1b2a;
+  --secondary-color: #1b263b;
+  --accent-color: #e07a5f;
+  --accent-light: #3d1418;
+  --light-blue: #1b263b;
+  
+  --text-dark: #f8f9fa;
+  --text-light: #a5a5a5;
+  --bg-color: #0b0f19;
+  --white: #151e2e;
+  --danger: #e63946;
+  --danger-light: #3d1418;
+  --primary-green: #38b000;
+  --light-bg: #1b263b;
+  --border-color: #2c3a50;
+}
+
+/* Enforce light/white text colors across all elements under Dark Theme */
+body.dark-theme,
+body.dark-theme p,
+body.dark-theme span:not(.text-success):not(.text-danger):not(.btn-logout),
+body.dark-theme label,
+body.dark-theme h1,
+body.dark-theme h2,
+body.dark-theme h3,
+body.dark-theme h4,
+body.dark-theme h5,
+body.dark-theme h6,
+body.dark-theme strong:not(.btn-logout),
+body.dark-theme td,
+body.dark-theme th,
+body.dark-theme li {
+  color: #f8f9fa !important;
+}
+
+/* Specific descriptive text blocks which use color '#999' or '#666' */
+body.dark-theme .text-light,
+body.dark-theme .text-muted,
+body.dark-theme div[style*="color: '#999'"],
+body.dark-theme div[style*="color: '#666'"],
+body.dark-theme span[style*="color: '#999'"],
+body.dark-theme span[style*="color: '#666'"],
+body.dark-theme div[style*="color: #999"],
+body.dark-theme div[style*="color: #666"],
+body.dark-theme span[style*="color: #999"],
+body.dark-theme span[style*="color: #666"] {
+  color: #a5a5a5 !important;
+}
+
+/* Proposal message body text under Dark Theme */
+body.dark-theme p[style*="color: '#333'"],
+body.dark-theme p[style*="color: #333"] {
+  color: #e2e8f0 !important;
+}
+
+/* Override bright background containers (like #e8f4f0 alert blocks) to be dark-harmonious */
+body.dark-theme div[style*="background-color: #e8f4f0"],
+body.dark-theme div[style*="background-color: rgb(232, 244, 240)"],
+body.dark-theme span[style*="background-color: #e8f4f0"],
+body.dark-theme span[style*="background-color: rgb(232, 244, 240)"] {
+  background-color: #1e3a2f !important;
+  background: #1e3a2f !important;
+  color: #38b000 !important;
+  border-color: #38b000 !important;
+}
+
+/* Force cards, tables and dropdown elements to use dark backgrounds instead of hardcoded white */
+body.dark-theme .card,
+body.dark-theme div[style*="background-color: #fdfdfd"],
+body.dark-theme div[style*="background-color: rgb(253, 253, 253)"],
+body.dark-theme div[style*="background: #fdfdfd"],
+body.dark-theme div[style*="background: rgb(253, 253, 253)"],
+body.dark-theme div[style*="background-color: #f9fcfb"],
+body.dark-theme div[style*="background-color: rgb(249, 252, 251)"],
+body.dark-theme div[style*="background-color: #fcfcfc"],
+body.dark-theme div[style*="background-color: rgb(252, 252, 252)"],
+body.dark-theme div[style*="background: rgba(255, 255, 255, 0.95)"] {
+  background-color: #151e2e !important;
+  background: #151e2e !important;
+  border-color: #2c3a50 !important;
+}
+
+/* Specific card backgrounds declared as solid #fff */
+body.dark-theme div[style*="background-color: #fff"],
+body.dark-theme div[style*="background-color: rgb(255, 255, 255)"] {
+  background-color: #151e2e !important;
+  background: #151e2e !important;
+  border-color: #2c3a50 !important;
+}
+
+/* Table footers and forms using light green/teal background (#E8F8F5 / rgb(232, 248, 245)) */
+body.dark-theme tfoot[style*="background-color: #E8F8F5"],
+body.dark-theme tfoot[style*="background-color: rgb(232, 248, 245)"],
+body.dark-theme form[style*="background-color: #E8F8F5"],
+body.dark-theme form[style*="background-color: rgb(232, 248, 245)"] {
+  background-color: #1b263b !important;
+  background: #1b263b !important;
+  border-color: #2c3a50 !important;
+}
+
+body.dark-theme tfoot[style*="background-color: #E8F8F5"] td,
+body.dark-theme tfoot[style*="background-color: rgb(232, 248, 245)"] td {
+  color: #f8f9fa !important;
+  border-top-color: #2c3a50 !important;
+}
+
+/* Light gray placeholders/inputs (#f0f0f0 / rgb(240, 240, 240)) */
+body.dark-theme div[style*="background-color: #f0f0f0"],
+body.dark-theme div[style*="background-color: rgb(240, 240, 240)"],
+body.dark-theme input[style*="background-color: #f0f0f0"],
+body.dark-theme input[style*="background-color: rgb(240, 240, 240)"] {
+  background-color: #1a2336 !important;
+  border-color: #3b4b68 !important;
+  color: #f8f9fa !important;
+}
+
+/* Progress bar background for database capacity (#e9ecef) */
+body.dark-theme div[style*="background-color: #e9ecef"],
+body.dark-theme div[style*="background-color: rgb(233, 236, 239)"] {
+  background-color: #1a2336 !important;
+}
+
+body.dark-theme .card h3,
+body.dark-theme .card h4 {
+  color: var(--accent-color) !important;
+}
+
+body.dark-theme input, 
+body.dark-theme textarea, 
+body.dark-theme select {
+  background-color: #1a2336;
+  border-color: #3b4b68;
+  color: #f8f9fa !important;
+}
+
+body.dark-theme input:focus, 
+body.dark-theme textarea:focus, 
+body.dark-theme select:focus {
+  background-color: #151e2e;
+  border-color: var(--accent-color);
+  color: #f8f9fa !important;
+}
+
+body.dark-theme thead th {
+  background-color: #1b263b;
+  border-bottom: 2px solid #0d1b2a;
+  color: #f8f9fa !important;
+}
+
+body.dark-theme tbody tr:hover {
+  background-color: #1b263b;
+}
+
+body.dark-theme tbody td {
+  border-bottom: 1px solid #1a2336;
+}
+
+/* Remover sombras de los botones neumórficos en modo oscuro */
+body.dark-theme button:not(.menu-toggle):not(.nav-link):not(.carousel-btn):not(.whatsapp-support-btn):not(.whatsapp-float):not(.install-prompt-btn-close):not(.install-prompt-btn-primary):not(.admin-tab):not(.animated-button):not(.lightbox-close-btn),
+body.dark-theme .btn:not(.menu-toggle):not(.nav-link):not(.carousel-btn):not(.whatsapp-support-btn):not(.whatsapp-float):not(.install-prompt-btn-close):not(.install-prompt-btn-primary):not(.admin-tab):not(.animated-button):not(.lightbox-close-btn) {
+  box-shadow: none !important;
+  border: 1px solid #3b4b68 !important;
+  background: #1b263b !important;
+  color: #f8f9fa !important;
+}
+
+body.dark-theme button:not(.menu-toggle):not(.nav-link):not(.carousel-btn):not(.whatsapp-support-btn):not(.whatsapp-float):not(.install-prompt-btn-close):not(.install-prompt-btn-primary):not(.admin-tab):not(.animated-button):not(.lightbox-close-btn):active,
+body.dark-theme .btn:not(.menu-toggle):not(.nav-link):not(.carousel-btn):not(.whatsapp-support-btn):not(.whatsapp-float):not(.install-prompt-btn-close):not(.install-prompt-btn-primary):not(.admin-tab):not(.animated-button):not(.lightbox-close-btn):active {
+  box-shadow: none !important;
+  background: #151e2e !important;
+}
+
+/* From Uiverse.io by njesenberger */ 
+.toggle-container {
+  --active-color: #1868e3;
+  --inactive-color: #d3d3d6;
+  position: relative;
+  aspect-ratio: 292 / 142;
+  height: 1.875em;
+}
+
+.toggle-input {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  position: absolute !important;
+  z-index: 10 !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.toggle {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.toggle-background {
+  fill: var(--inactive-color);
+  transition: fill .4s;
+}
+
+.toggle-input:checked + .toggle .toggle-background {
+  fill: var(--active-color);
+}
+
+.toggle-circle-center {
+  transform-origin: center;
+  transition: transform .6s;
+}
+
+.toggle-input:checked + .toggle .toggle-circle-center {
+  transform: translateX(150px);
+}
+
+.toggle-circle {
+  transform-origin: center;
+  transition: transform .45s;
+  backface-visibility: hidden;
+}
+
+.toggle-circle.left {
+  transform: scale(1);
+}
+
+.toggle-input:checked + .toggle .toggle-circle.left {
+  transform: scale(0);
+}
+
+.toggle-circle.right {
+  transform: scale(0);
+}
+
+.toggle-input:checked + .toggle .toggle-circle.right {
+  transform: scale(1);
+}
+
+.toggle-icon {
+  transition: fill .4s;
+}
+
+.toggle-icon.on {
+  fill: var(--inactive-color);
+}
+
+.toggle-input:checked + .toggle .toggle-icon.on {
+  fill: #fff;
+}
+
+.toggle-icon.off {
+  fill: #eaeaec;
+}
+
+.toggle-input:checked + .toggle .toggle-icon.off {
+  fill: var(--active-color);
+}
+
+/* Estilos para el switch del panel de administración */
+.switch-toggle {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 24px;
+}
+
+.switch-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider-toggle {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #cbd5e1;
+  transition: .3s;
+  border-radius: 24px;
+}
+
+.slider-toggle:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .3s;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+.switch-toggle input:checked + .slider-toggle {
+  background-color: var(--danger, #E74C3C);
+}
+
+.switch-toggle input:focus + .slider-toggle {
+  box-shadow: 0 0 1px var(--danger, #E74C3C);
+}
+
+.switch-toggle input:checked + .slider-toggle:before {
+  transform: translateX(24px);
+}
+
+/* Modo oscuro para el label y contenedor de mantenimiento */
+body.dark-theme .maintenance-card-right {
+  background: #1b263b !important;
+  border-color: #2c3a50 !important;
+}
+
+body.dark-theme .maintenance-card-right label,
+body.dark-theme .maintenance-card-right span {
+  color: #f8f9fa !important;
+}
+
+/* Corregir celdas pegajosas (sticky right) de color blanco en tablas y cualquier elemento inline con fondo blanco en modo oscuro */
+body.dark-theme td[style*="background-color: white"],
+body.dark-theme td[style*="background-color: rgb(255, 255, 255)"],
+body.dark-theme td[style*="background-color: #fff"],
+body.dark-theme td[style*="background-color: #ffffff"],
+body.dark-theme td[style*="background: white"],
+body.dark-theme td[style*="background: rgb(255, 255, 255)"],
+body.dark-theme td[style*="background: #fff"],
+body.dark-theme td[style*="background: #ffffff"],
+body.dark-theme th[style*="background-color: white"],
+body.dark-theme th[style*="background-color: rgb(255, 255, 255)"],
+body.dark-theme th[style*="background-color: #fff"],
+body.dark-theme th[style*="background-color: #ffffff"] {
+  background-color: #151e2e !important;
+  background: #151e2e !important;
+  border-left-color: #2c3a50 !important;
+  border-color: #2c3a50 !important;
+}
+
+body.dark-theme div[style*="background: #ffffff"],
+body.dark-theme div[style*="background-color: #ffffff"] {
+  background-color: #151e2e !important;
+  background: #151e2e !important;
+  border-color: #2c3a50 !important;
+}
+
+/* ==========================================
+   andrew-demchenk0 3D Cube Loader styles
+   ========================================== */
+.cube-loader {
+  position: relative;
+  width: 75px;
+  height: 75px;
+  transform-style: preserve-3d;
+  transform: rotateX(-30deg);
+  animation: animate 4s linear infinite;
+}
+
+@keyframes animate {
+  0% {
+    transform: rotateX(-30deg) rotateY(0);
+  }
+
+  100% {
+    transform: rotateX(-30deg) rotateY(360deg);
+  }
+}
+
+.cube-loader .cube-wrapper {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+}
+
+.cube-loader .cube-wrapper .cube-span {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform: rotateY(calc(90deg * var(--i))) translateZ(37.5px);
+  background: linear-gradient(
+    to bottom,
+    hsl(330, 3.13%, 25.1%) 0%,
+    hsl(177.27, 21.71%, 32.06%) 5.5%,
+    hsl(176.67, 34.1%, 36.88%) 12.1%,
+    hsl(176.61, 42.28%, 40.7%) 19.6%,
+    hsl(176.63, 48.32%, 43.88%) 27.9%,
+    hsl(176.66, 53.07%, 46.58%) 36.6%,
+    hsl(176.7, 56.94%, 48.91%) 45.6%,
+    hsl(176.74, 62.39%, 50.91%) 54.6%,
+    hsl(176.77, 69.86%, 52.62%) 63.4%,
+    hsl(176.8, 76.78%, 54.08%) 71.7%,
+    hsl(176.83, 83.02%, 55.29%) 79.4%,
+    hsl(176.85, 88.44%, 56.28%) 86.2%,
+    hsl(176.86, 92.9%, 57.04%) 91.9%,
+    hsl(176.88, 96.24%, 57.59%) 96.3%,
+    hsl(176.88, 98.34%, 57.93%) 99%,
+    hsl(176.89, 99.07%, 58.04%) 100%
+  );
+}
+
+.cube-top {
+  position: absolute;
+  width: 75px;
+  height: 75px;
+  background: hsl(330, 3.13%, 25.1%) 0%;
+                      /* width 75px / 2 = 37.5px */
+  transform: rotateX(90deg) translateZ(37.5px);
+  transform-style: preserve-3d;
+}
+
+.cube-top::before {
+  content: '';
+  position: absolute;
+/* u can choose any size */
+  width: 75px;
+  height: 75px;
+  background: hsl(176.61, 42.28%, 40.7%) 19.6%;
+  transform: translateZ(-90px);
+  filter: blur(10px);
+  box-shadow: 0 0 10px #323232,
+              0 0 20px hsl(176.61, 42.28%, 40.7%) 19.6%,
+              0 0 30px #323232,
+              0 0 40px hsl(176.61, 42.28%, 40.7%) 19.6%;
+}
