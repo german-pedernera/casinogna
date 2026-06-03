@@ -329,7 +329,7 @@ const PanelPrincipal = ({ user }) => {
                             <Cell key={`cell-${index}`} fill={entry.color} />
                           ))}
                         </Pie>
-                        <Tooltip contentStyle={{ fontSize: '12px', padding: '4px 8px', borderRadius: '4px' }} itemStyle={{ padding: 0 }} />
+                        <Tooltip contentStyle={{ fontSize: '12px', padding: '4px 8px', borderRadius: '4px', color: '#333' }} itemStyle={{ padding: 0, color: '#333' }} />
                       </PieChart>
                     </div>
                   </div>
