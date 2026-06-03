@@ -4,7 +4,7 @@ import { supabase } from '../supabase';
 import { useModal } from '../context/ModalContext';
 import { Eye, EyeOff } from 'lucide-react';
 import CambiarContrasena from './CambiarContrasena';
-import { enviarNotificacionTelegram } from '../services/TelegramService';
+
 import './Login.css';
 
 const Login = ({ onLogin }) => {
@@ -25,8 +25,6 @@ const Login = ({ onLogin }) => {
     const isAdmin = admins.find(a => a.user === mi && a.pass === ce);
     
     if (isAdmin) {
-      const fechaActual = new Date().toLocaleString('es-AR');
-      enviarNotificacionTelegram(`📱 <b>App Casino de Oficiales</b>\n🔐 <b>ADMINISTRADOR</b> inició sesión.\n👤 Socio que se conecta: ${mi}\n👤 Administrador: Sí\n📅 Fecha y Hora: ${fechaActual}`);
       onLogin({ role: 'admin', name: mi });
       navigate('/panel');
     } else if (mi && ce) {
@@ -41,9 +39,6 @@ const Login = ({ onLogin }) => {
         
         if (data && data.length > 0) {
           const userData = data[0];
-          
-          const fechaActual = new Date().toLocaleString('es-AR');
-          enviarNotificacionTelegram(`📱 <b>App Casino de Oficiales</b>\n✅ <b>ACCESO SOCIO</b>\n👤 Socio que se conecta: ${userData.nombreApellido || mi} (${userData.jerarquia || 'Socio'})\n👤 Administrador: No\n📅 Fecha y Hora: ${fechaActual}`);
           
           // Actualizar último acceso (ignora error si no existe la columna)
           supabase.from('usuarios').update({ ultimo_acceso: new Date().toISOString() }).eq('id', userData.id).then();

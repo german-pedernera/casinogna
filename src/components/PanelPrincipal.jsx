@@ -3,7 +3,7 @@ import { supabase } from '../supabase';
 import { useOutletContext } from 'react-router-dom';
 import { ThumbsUp, ThumbsDown, Trash2 } from 'lucide-react';
 import { PieChart, Pie, Cell, Tooltip } from 'recharts';
-import { enviarNotificacionTelegram } from '../services/TelegramService';
+
 
 const PanelPrincipal = ({ user }) => {
   const { onlineCount } = useOutletContext() || { onlineCount: 1 };
@@ -62,21 +62,6 @@ const PanelPrincipal = ({ user }) => {
     try {
       setEnviando(true);
 
-      // Obtener ubicación siempre (por decisión de los socios)
-      let ubicacionTexto = '';
-      if (navigator.geolocation) {
-        try {
-          const position = await new Promise((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 });
-          });
-          const { latitude, longitude } = position.coords;
-          ubicacionTexto = `\n📍 <b>Ubicación:</b> <a href="https://www.google.com/maps?q=${latitude},${longitude}">Ver en Google Maps</a>`;
-        } catch (geoError) {
-          console.warn('No se pudo obtener la ubicación', geoError);
-          ubicacionTexto = '\n📍 <i>Ubicación solicitada pero no disponible o denegada por el navegador.</i>';
-        }
-      }
-
       const { error } = await supabase.from('propuestas').insert([{
         mi: mi,
         ce: ce,
@@ -87,11 +72,6 @@ const PanelPrincipal = ({ user }) => {
         votos: []
       }]);
       if (error) throw error;
-
-      // Enviar notificación a Telegram
-      const fechaActual = new Date().toLocaleString('es-AR');
-      const mensajeTelegram = `📱 <b>App Casino de Oficiales</b>\n💡 <b>NUEVA PROPUESTA</b>\n👤 Socio: ${user?.rank || 'N/A'} ${user?.name || 'Usuario'}\n👤 Administrador: ${user?.role === 'admin' ? 'Sí' : 'No'}\n📅 Fecha y Hora: ${fechaActual}\n📝 <b>Mensaje:</b>\n<i>"${propuesta}"</i>${ubicacionTexto}`;
-      enviarNotificacionTelegram(mensajeTelegram);
 
       setPropuesta('');
       setMi('');
