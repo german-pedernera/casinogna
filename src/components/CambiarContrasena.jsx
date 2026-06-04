@@ -124,7 +124,7 @@ const CambiarContrasena = ({ onBack }) => {
               <button 
                 type="button"
                 className="btn btn-link position-absolute"
-                style={{ right: '10px', top: '50%', transform: 'translateY(-50%)', padding: 0, color: '#6c757d', border: 'none', background: 'none' }}
+                style={{ right: '10px', top: '50%', transform: 'translateY(-50%)', padding: 0, color: 'white', border: 'none', background: 'none', boxShadow: 'none' }}
                 onClick={() => setShowCeActual(!showCeActual)}
                 title={showCeActual ? "Ocultar contraseña" : "Ver contraseña"}
               >
@@ -141,8 +141,9 @@ const CambiarContrasena = ({ onBack }) => {
             <div className="d-flex flex-row justify-content-center gap-2 mt-3" style={{ maxWidth: '400px', margin: '0 auto' }}>
               <button 
                 type="submit" 
-                className="btn btn-primary flex-grow-1"
+                className="btn flex-grow-1"
                 disabled={loading}
+                style={{ backgroundColor: 'white', color: 'black', borderRadius: '30px', border: 'none', boxShadow: 'none', fontWeight: '600' }}
               >
                 {loading ? 'Verificando...' : 'Verificar Credenciales'}
               </button>
@@ -151,7 +152,7 @@ const CambiarContrasena = ({ onBack }) => {
                 type="button"
                 onClick={onBack}
                 className="btn flex-grow-1"
-                style={{ backgroundColor: '#6c757d', color: 'white' }}
+                style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)', color: 'white', borderRadius: '30px', border: '1px solid rgba(255, 255, 255, 0.4)', boxShadow: 'none', fontWeight: '600', backdropFilter: 'blur(5px)' }}
               >
                 Volver
               </button>
@@ -172,7 +173,7 @@ const CambiarContrasena = ({ onBack }) => {
               <button 
                 type="button"
                 className="btn btn-link position-absolute"
-                style={{ right: '10px', top: '50%', transform: 'translateY(-50%)', padding: 0, color: '#6c757d', border: 'none', background: 'none' }}
+                style={{ right: '10px', top: '50%', transform: 'translateY(-50%)', padding: 0, color: 'white', border: 'none', background: 'none', boxShadow: 'none' }}
                 onClick={() => setShowNuevoCe(!showNuevoCe)}
               >
                 {showNuevoCe ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -192,7 +193,7 @@ const CambiarContrasena = ({ onBack }) => {
               <button 
                 type="button"
                 className="btn btn-link position-absolute"
-                style={{ right: '10px', top: '50%', transform: 'translateY(-50%)', padding: 0, color: '#6c757d', border: 'none', background: 'none' }}
+                style={{ right: '10px', top: '50%', transform: 'translateY(-50%)', padding: 0, color: 'white', border: 'none', background: 'none', boxShadow: 'none' }}
                 onClick={() => setShowConfirmarCe(!showConfirmarCe)}
               >
                 {showConfirmarCe ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -208,8 +209,9 @@ const CambiarContrasena = ({ onBack }) => {
             <div className="d-flex flex-row justify-content-center gap-2 mt-3" style={{ maxWidth: '400px', margin: '0 auto' }}>
               <button 
                 type="submit" 
-                className="btn btn-primary flex-grow-1"
+                className="btn flex-grow-1"
                 disabled={loading}
+                style={{ backgroundColor: 'white', color: 'black', borderRadius: '30px', border: 'none', boxShadow: 'none', fontWeight: '600' }}
               >
                 {loading ? 'Actualizando...' : 'Actualizar Contraseña'}
               </button>
@@ -221,7 +223,7 @@ const CambiarContrasena = ({ onBack }) => {
                   setMensaje({text:'', type:''});
                 }}
                 className="btn flex-grow-1"
-                style={{ backgroundColor: '#6c757d', color: 'white' }}
+                style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)', color: 'white', borderRadius: '30px', border: '1px solid rgba(255, 255, 255, 0.4)', boxShadow: 'none', fontWeight: '600', backdropFilter: 'blur(5px)' }}
               >
                 Cancelar
               </button>

@@ -71,14 +71,9 @@ const Login = ({ onLogin }) => {
 
   return (
     <div className="login-container">
-      <div className="card login-card">
-        <div className="text-center mb-4">
-          <div className="circle-logo mx-auto"></div>
-          <h2 className="mt-4" style={{ color: 'var(--primary-green)' }}>
-            Casino de Oficiales del Escuadrón de Seguridad Vial “Santa Catalina”
-          </h2>
-        </div>
-        <form onSubmit={handleSubmit} autoComplete="off" className="d-flex flex-column gap-4">
+      <div className="login-card">
+        <h2>Casino de Oficiales del Escuadrón de Seguridad Vial "Santa Catalina"</h2>
+        <form onSubmit={handleSubmit} autoComplete="off" className="d-flex flex-column gap-3">
           <div>
             <input
               type="text"
@@ -101,28 +96,27 @@ const Login = ({ onLogin }) => {
             <button 
               type="button"
               className="btn btn-link position-absolute"
-              style={{ right: '10px', top: '50%', transform: 'translateY(-50%)', padding: 0, color: '#6c757d', border: 'none', background: 'none' }}
+              style={{ right: '10px', top: '50%', transform: 'translateY(-50%)', padding: 0, color: 'white', border: 'none', background: 'none' }}
               onClick={() => setShowCe(!showCe)}
               title={showCe ? "Ocultar contraseña" : "Ver contraseña"}
             >
               {showCe ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
-          <div className="d-flex justify-content-center mt-4 flex-column align-items-center gap-3">
-            <button type="submit" className="btn btn-primary w-100" style={{ maxWidth: '300px' }}>
-              Ingresar a la App
-            </button>
-            <div className="d-flex flex-column align-items-center gap-2 mt-2">
-              <button 
-                type="button" 
-                onClick={() => setShowChangePassword(true)}
-                style={{ color: 'var(--text-light)', fontSize: '0.9rem', textDecoration: 'underline', border: 'none', background: 'none', cursor: 'pointer' }}
-              >
-                ¿Desea modificar su contraseña?
-              </button>
-            </div>
-          </div>
+          
+
+
+          <button type="submit" className="login-btn">
+            Ingresar a la App
+          </button>
         </form>
+
+        <div className="social-login">
+
+          <div className="already-account">
+            ¿Ya tienes una cuenta? <button type="button" onClick={() => setShowChangePassword(true)}>Modificar contraseña</button>
+          </div>
+        </div>
       </div>
     </div>
   );
