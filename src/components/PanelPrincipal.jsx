@@ -3,10 +3,12 @@ import { supabase } from '../supabase';
 import { useOutletContext } from 'react-router-dom';
 import { ThumbsUp, ThumbsDown, Trash2 } from 'lucide-react';
 import { PieChart, Pie, Cell, Tooltip } from 'recharts';
+import { useModal } from '../context/ModalContext';
 
 
 const PanelPrincipal = ({ user }) => {
   const { onlineCount } = useOutletContext() || { onlineCount: 1 };
+  const { showModal } = useModal();
   const [propuesta, setPropuesta] = useState('');
   const [mi, setMi] = useState('');
   const [ce, setCe] = useState('');
@@ -136,7 +138,12 @@ const PanelPrincipal = ({ user }) => {
   };
 
   const handleDeletePropuesta = async (id) => {
-    if (!window.confirm("¿Estás seguro de que deseas eliminar esta propuesta?")) return;
+    const isConfirmed = await showModal({
+      type: 'confirm',
+      title: 'Eliminar Propuesta',
+      message: '¿Estás seguro de que deseas eliminar esta propuesta?'
+    });
+    if (!isConfirmed) return;
     
     try {
       const { error } = await supabase.from('propuestas').delete().eq('id', id);
