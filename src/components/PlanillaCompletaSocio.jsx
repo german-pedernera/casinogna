@@ -5,6 +5,30 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { useModal } from '../context/ModalContext';
 
+const getRankWeight = (jerarquia) => {
+  const ranks = {
+    "Comandante General": 1,
+    "Comandante Mayor": 2,
+    "Comandante Principal": 3,
+    "Comandante": 4,
+    "Segundo Comandante": 5,
+    "Primer Alférez": 6,
+    "Alférez": 7,
+    "Subalférez": 8,
+    "Suboficial Mayor": 9,
+    "Oficial Mayor": 9,
+    "Suboficial Principal": 10,
+    "Oficial Principal": 10,
+    "Sargento Ayudante": 11,
+    "Sargento Primero": 12,
+    "Sargento": 13,
+    "Cabo Primero": 14,
+    "Cabo": 15,
+    "Gendarme": 16
+  };
+  return ranks[jerarquia] || 99;
+};
+
 const PlanillaCompletaSocio = ({ isAdmin }) => {
   const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,8 +55,12 @@ const PlanillaCompletaSocio = ({ isAdmin }) => {
       if (error) throw error;
       const data = rawData || [];
       
-      // Ordenar por orden de carga (ID)
-      data.sort((a, b) => a.id - b.id);
+      // Ordenar por jerarquía y luego por orden de carga (ID)
+      data.sort((a, b) => {
+        const rankDiff = getRankWeight(a.jerarquia) - getRankWeight(b.jerarquia);
+        if (rankDiff !== 0) return rankDiff;
+        return a.id - b.id;
+      });
       
       setUsuarios(data);
       setLoading(false);
