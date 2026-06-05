@@ -1,21 +1,21 @@
 :root {
-  /* Nueva Paleta (Azul y Naranja) */
-  --primary-color: #1b4b6b;
-  --secondary-color: #2c6287;
-  --accent-color: #d66436;
-  --accent-light: #f5dbce;
-  --light-blue: #eef2f5;
+  /* Colores Principales (Azules/Verdes modernos) */
+  --primary-color: #0c4a6e; /* Azul oscuro elegante */
+  --secondary-color: #0284c7; /* Azul vibrante */
+  --accent-color: #0ea5e9; /* Celeste intenso */
+  --accent-light: #e0f2fe; /* Celeste muy claro */
+  --light-blue: #f0f9ff;
   
   /* Grises y Texto */
-  --text-dark: #192734;
-  --text-light: #5a6b7c;
-  --bg-color: #e6f9ed;
+  --text-dark: #0f172a;
+  --text-light: #64748b;
+  --bg-color: #E0FFFF; /* Fondo menta/celeste super suave */
   --white: #FFFFFF;
-  --danger: #E74C3C;
-  --danger-light: #FDEDEC;
-  --primary-green: #198754;
-  --light-bg: #f8f9fa;
-  --border-color: #eee;
+  --danger: #ef4444;
+  --danger-light: #fef2f2;
+  --primary-green: #0d9488; /* Verde azulado (Teal) moderno */
+  --light-bg: #f8fafc;
+  --border-color: #e2e8f0;
 
   /* Elevaciones (Sombras) */
   --shadow-sm: 0 4px 6px rgba(27, 75, 107, 0.05);
@@ -50,6 +50,15 @@ body {
   color: var(--text-dark);
   -webkit-font-smoothing: antialiased;
   line-height: 1.5;
+}
+
+body.dark-theme {
+  /* Only dark theme overrides here */
+}
+
+#root {
+  position: relative;
+  z-index: 1;
 }
 
 /* Typography Modernizada */
@@ -738,6 +747,14 @@ body.dark-theme div[style*="background-color: #ffffff"] {
 /* ==========================================
    andrew-demchenk0 3D Cube Loader styles
    ========================================== */
+.image-loader {
+  width: 200px;
+  height: auto;
+  transform-style: preserve-3d;
+  animation: animate 4s linear infinite;
+  filter: drop-shadow(0 0 20px rgba(176, 218, 201, 0.2));
+}
+
 .cube-loader {
   position: relative;
   width: 75px;

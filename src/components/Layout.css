@@ -198,9 +198,10 @@
   gap: 10px;
 }
 
-.animated-button:hover {
+.animated-button:hover,
+.animated-button:hover span {
   box-shadow: 0 0 0 10px transparent;
-  color: #212121;
+  color: #212121 !important;
   border-radius: 10px;
 }
 
@@ -218,7 +219,7 @@
 
 .animated-button:hover svg.arr-1,
 .animated-button:hover svg.arr-2 {
-  fill: #212121;
+  fill: #212121 !important;
 }
 
 .animated-button:active {
@@ -233,9 +234,10 @@
 }
 
 /* Active Page State */
-.animated-button.active {
+.animated-button.active,
+.animated-button.active span {
   background-color: white;
-  color: #212121;
+  color: #212121 !important;
   box-shadow: 0 0 0 2px white;
   border-radius: 10px;
 }
@@ -254,16 +256,15 @@
 
 .animated-button.active svg.arr-1,
 .animated-button.active svg.arr-2 {
-  fill: #212121;
+  fill: #212121 !important;
 }
 
-body.dark-theme .animated-button.active {
-  color: #003366 !important;
-}
-
-body.dark-theme .animated-button.active svg.arr-1,
-body.dark-theme .animated-button.active svg.arr-2 {
-  fill: #003366 !important;
+/* Force dark text against global dark mode span overrides */
+body.dark-theme aside.sidebar .nav-list .nav-item .animated-button.active,
+body.dark-theme aside.sidebar .nav-list .nav-item .animated-button.active span,
+body.dark-theme aside.sidebar .nav-list .nav-item .animated-button:hover,
+body.dark-theme aside.sidebar .nav-list .nav-item .animated-button:hover span {
+  color: #212121 !important;
 }
 
 
@@ -332,7 +333,7 @@ body.dark-theme .animated-button.active svg.arr-2 {
 .content {
   flex: 1;
   padding: 40px;
-  background-color: var(--bg-color);
+  background-color: transparent;
   overflow-y: auto;
 }
 
