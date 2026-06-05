@@ -43,13 +43,14 @@ const GroupedCard = ({ group, isAdmin, handleDelete, handleDownloadImage, handle
   };
 
   return (
-    <div className="card p-2" style={{ display: 'flex', flexDirection: 'column' }}>
-      <div style={{ width: '100%', height: '200px', backgroundColor: '#f0f0f0', borderRadius: '4px', overflow: 'hidden', position: 'relative' }}>
+    <div className="card p-2" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+        <div style={{ width: '100%', height: '200px', backgroundColor: '#f0f0f0', borderRadius: '4px', overflow: 'hidden', position: 'relative' }}>
         <img 
           src={imgUrl} 
           alt={currentFoto.descripcion} 
           style={{ width: '100%', height: '100%', objectFit: 'cover', cursor: 'pointer', transition: 'transform 0.2s ease, filter 0.2s ease' }} 
-          onClick={() => onPreviewImage(imgUrl, currentFoto.descripcion)}
+          onClick={() => onPreviewImage(currentFoto)}
           onMouseEnter={(e) => {
             e.target.style.transform = 'scale(1.03)';
             e.target.style.filter = 'brightness(1.05)';
@@ -100,6 +101,7 @@ const GroupedCard = ({ group, isAdmin, handleDelete, handleDownloadImage, handle
           )}
         </div>
       )}
+      </div>
 
       <div className="d-flex justify-content-center gap-2 mt-auto flex-wrap">
         <button 
@@ -151,7 +153,7 @@ const GaleriaFotografica = ({ isAdmin }) => {
   const [descripcion, setDescripcion] = useState('');
   const [files, setFiles] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [previewImage, setPreviewImage] = useState(null);
+  const [previewIndex, setPreviewIndex] = useState(null);
   const { showModal } = useModal();
 
   const fetchFotos = async () => {
@@ -409,7 +411,8 @@ const GaleriaFotografica = ({ isAdmin }) => {
         <div style={{ 
           display: 'grid', 
           gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', 
-          gap: '20px' 
+          gap: '20px',
+          alignItems: 'stretch'
         }}>
           {groupedFotos.map((group, idx) => (
             <GroupedCard 
@@ -420,7 +423,7 @@ const GaleriaFotografica = ({ isAdmin }) => {
               handleDownloadImage={handleDownloadImage}
               handleEditDescription={handleEditDescription}
               handleAddMorePhotos={handleAddMorePhotos}
-              onPreviewImage={(url, desc) => setPreviewImage({ url, desc })}
+              onPreviewImage={(foto) => setPreviewIndex(filteredFotos.findIndex(f => f.id === foto.id))}
             />
           ))}
         </div>
@@ -428,30 +431,109 @@ const GaleriaFotografica = ({ isAdmin }) => {
         <p className="text-light">No se encontraron fotografías.</p>
       )}
 
-      {previewImage && (
-        <div 
-          className="modal-overlay fadeIn" 
-          onClick={() => setPreviewImage(null)}
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(11, 15, 25, 0.9)',
-            backdropFilter: 'blur(10px)',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000000,
-            animation: 'fadeIn 0.25s ease-out',
-            padding: '20px'
-          }}
-        >
+      {(() => {
+        const currentPreviewFoto = previewIndex !== null && filteredFotos[previewIndex] ? filteredFotos[previewIndex] : null;
+        let currentPreviewUrl = null;
+        if (currentPreviewFoto) {
+          currentPreviewUrl = currentPreviewFoto.url;
+          try {
+            const parsed = JSON.parse(currentPreviewFoto.url);
+            if (Array.isArray(parsed)) {
+              currentPreviewUrl = parsed[0];
+            }
+          } catch {
+            currentPreviewUrl = currentPreviewFoto.url;
+          }
+        }
+
+        return currentPreviewFoto && (
           <div 
-            className="scaleUp" 
-            onClick={(e) => e.stopPropagation()}
+            className="modal-overlay fadeIn" 
+            onClick={() => setPreviewIndex(null)}
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(11, 15, 25, 0.9)',
+              backdropFilter: 'blur(10px)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 1000000,
+              animation: 'fadeIn 0.25s ease-out',
+              padding: '20px'
+            }}
+          >
+            {/* Botón Anterior */}
+            {filteredFotos.length > 1 && (
+              <button 
+                onClick={(e) => { e.stopPropagation(); setPreviewIndex((prev) => (prev - 1 + filteredFotos.length) % filteredFotos.length); }}
+                style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '20px',
+                  transform: 'translateY(-50%)',
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: '50px',
+                  height: '50px',
+                  color: 'white',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  transition: 'background 0.2s',
+                  outline: 'none',
+                  padding: '0',
+                  zIndex: 1000001
+                }}
+                title="Anterior"
+                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)'}
+                onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'}
+              >
+                <ChevronLeft size={32} />
+              </button>
+            )}
+
+            {/* Botón Siguiente */}
+            {filteredFotos.length > 1 && (
+              <button 
+                onClick={(e) => { e.stopPropagation(); setPreviewIndex((prev) => (prev + 1) % filteredFotos.length); }}
+                style={{
+                  position: 'absolute',
+                  top: '50%',
+                  right: '20px',
+                  transform: 'translateY(-50%)',
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: '50px',
+                  height: '50px',
+                  color: 'white',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  transition: 'background 0.2s',
+                  outline: 'none',
+                  padding: '0',
+                  zIndex: 1000001
+                }}
+                title="Siguiente"
+                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)'}
+                onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'}
+              >
+                <ChevronRight size={32} />
+              </button>
+            )}
+
+            <div 
+              className="scaleUp" 
+              onClick={(e) => e.stopPropagation()}
             style={{
               position: 'relative',
               maxWidth: '95%',
@@ -463,7 +545,7 @@ const GaleriaFotografica = ({ isAdmin }) => {
             }}
           >
             <button 
-              onClick={() => setPreviewImage(null)}
+              onClick={() => setPreviewIndex(null)}
               className="lightbox-close-btn"
               style={{
                 position: 'absolute',
@@ -491,8 +573,8 @@ const GaleriaFotografica = ({ isAdmin }) => {
             </button>
 
             <img 
-              src={previewImage.url} 
-              alt={previewImage.desc} 
+              src={currentPreviewUrl} 
+              alt={currentPreviewFoto.descripcion} 
               style={{
                 maxWidth: '100%',
                 maxHeight: '70vh',
@@ -514,11 +596,11 @@ const GaleriaFotografica = ({ isAdmin }) => {
               gap: '12px'
             }}>
               <p style={{ margin: 0, fontSize: '1.05rem', fontWeight: '500', textShadow: '0 2px 4px rgba(0,0,0,0.8)', color: '#eee' }}>
-                {previewImage.desc}
+                {currentPreviewFoto.descripcion}
               </p>
               <button 
                 className="btn btn-primary d-flex justify-content-center align-items-center gap-2" 
-                onClick={() => handleDownloadImage(previewImage.url, previewImage.desc)}
+                onClick={() => handleDownloadImage(currentPreviewUrl, currentPreviewFoto.descripcion)}
                 style={{
                   padding: '10px 24px',
                   fontSize: '0.9rem',
@@ -533,7 +615,8 @@ const GaleriaFotografica = ({ isAdmin }) => {
             </div>
           </div>
         </div>
-      )}
+        );
+      })()}
     </div>
   );
 };
