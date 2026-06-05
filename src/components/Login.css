@@ -39,11 +39,11 @@
   border: none !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.6) !important;
   color: white !important;
-  padding: 10px 0;
+  padding: 10px 12px;
   font-size: 1rem;
   outline: none;
   box-shadow: none !important;
-  border-radius: 0;
+  border-radius: 8px !important;
 }
 
 .login-card input::placeholder {
