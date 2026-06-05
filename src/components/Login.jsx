@@ -26,7 +26,7 @@ const Login = ({ onLogin }) => {
     
     if (isAdmin) {
       onLogin({ role: 'admin', name: mi });
-      navigate('/panel');
+      navigate('/admin');
     } else if (mi && ce) {
       try {
         const { data, error } = await supabase

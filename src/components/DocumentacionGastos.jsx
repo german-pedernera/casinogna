@@ -8,7 +8,7 @@ const DocumentacionGastos = ({ isAdmin }) => {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [titulo, setTitulo] = useState('');
-  const [file, setFile] = useState(null);
+  const [files, setFiles] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [editTitle, setEditTitle] = useState('');
@@ -33,38 +33,46 @@ const DocumentacionGastos = ({ isAdmin }) => {
 
   const handleUpload = async (e) => {
     e.preventDefault();
-    if (!file || !titulo) return;
+    if (!files || files.length === 0 || !titulo) return;
 
     setUploading(true);
-    const fileName = `${Date.now()}_${file.name}`;
 
     try {
-      const { error: uploadError } = await supabase.storage
-        .from('documentacion')
-        .upload(fileName, file);
-      
-      if (uploadError) throw uploadError;
+      for (const f of files) {
+        const safeName = f.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+        const fileName = `${Date.now()}_${safeName}`;
 
-      const { data: { publicUrl } } = supabase.storage
-        .from('documentacion')
-        .getPublicUrl(fileName);
+        const { error: uploadError } = await supabase.storage
+          .from('documentacion')
+          .upload(fileName, f);
+        
+        if (uploadError) throw uploadError;
 
-      const { error: dbError } = await supabase.from('documentacion').insert([{
-        titulo: titulo,
-        url: publicUrl,
-        fileName: fileName,
-        fecha: new Date().toISOString()
-      }]);
+        const { data: { publicUrl } } = supabase.storage
+          .from('documentacion')
+          .getPublicUrl(fileName);
 
-      if (dbError) throw dbError;
+        const fileTitulo = files.length > 1 ? `${titulo} - ${f.name}` : titulo;
+
+        const { error: dbError } = await supabase.from('documentacion').insert([{
+          titulo: fileTitulo,
+          url: publicUrl,
+          fileName: fileName,
+          fecha: new Date().toISOString()
+        }]);
+
+        if (dbError) throw dbError;
+      }
 
       setTitulo('');
-      setFile(null);
+      setFiles([]);
       setUploading(false);
       fetchDocumentos();
+      showModal({ type: 'alert', title: 'Éxito', message: 'Documento(s) subido(s) correctamente.' });
     } catch (error) {
       console.error("Error uploading file:", error);
       setUploading(false);
+      showModal({ type: 'alert', title: 'Error', message: 'Hubo un error al subir los archivos. Verifique la conexión o el tamaño de los mismos.' });
     }
   };
 
@@ -124,7 +132,8 @@ const DocumentacionGastos = ({ isAdmin }) => {
             <input 
               type="file" 
               accept=".pdf"
-              onChange={(e) => setFile(e.target.files[0])} 
+              multiple
+              onChange={(e) => setFiles(Array.from(e.target.files))} 
               required 
               style={{ minWidth: '0' }}
             />
