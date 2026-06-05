@@ -578,7 +578,7 @@ const Layout = ({ user, onLogout }) => {
                       type={showFormPassword ? "text" : "password"} 
                       placeholder="Contraseña" 
                       value={personalFormData.ce} 
-                      onChange={(e) => setPersonalFormData({...personalFormData, ce: e.target.value})} 
+                      onChange={(e) => setPersonalFormData({...personalFormData, ce: e.target.value.replace(/\s/g, '')})} 
                       required 
                       style={{ paddingRight: '40px' }}
                     />

@@ -105,7 +105,7 @@ const CambiarContrasena = ({ onBack }) => {
                 type="text" 
                 placeholder="DNI (MI)" 
                 value={mi}
-                onChange={(e) => setMi(e.target.value)}
+                onChange={(e) => setMi(e.target.value.replace(/\s/g, ''))}
                 required 
                 autoComplete="new-password"
               />
@@ -116,7 +116,7 @@ const CambiarContrasena = ({ onBack }) => {
                 type={showCeActual ? "text" : "password"} 
                 placeholder="Contraseña Actual" 
                 value={ceActual}
-                onChange={(e) => setCeActual(e.target.value)}
+                onChange={(e) => setCeActual(e.target.value.replace(/\s/g, ''))}
                 required 
                 autoComplete="new-password"
                 style={{ paddingRight: '40px' }}
@@ -165,7 +165,7 @@ const CambiarContrasena = ({ onBack }) => {
                 type={showNuevoCe ? "text" : "password"} 
                 placeholder="Nueva Contraseña" 
                 value={nuevoCe}
-                onChange={(e) => setNuevoCe(e.target.value)}
+                onChange={(e) => setNuevoCe(e.target.value.replace(/\s/g, ''))}
                 required 
                 autoComplete="new-password"
                 style={{ paddingRight: '40px' }}
@@ -185,7 +185,7 @@ const CambiarContrasena = ({ onBack }) => {
                 type={showConfirmarCe ? "text" : "password"} 
                 placeholder="Confirmar Nueva Contraseña" 
                 value={confirmarCe}
-                onChange={(e) => setConfirmarCe(e.target.value)}
+                onChange={(e) => setConfirmarCe(e.target.value.replace(/\s/g, ''))}
                 required 
                 autoComplete="new-password"
                 style={{ paddingRight: '40px' }}

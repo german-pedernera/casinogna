@@ -137,7 +137,7 @@ const AccesoSocio = () => {
                         <input 
                           type="text" 
                           value={editData.dni || ''} 
-                          onChange={(e) => setEditData({...editData, dni: e.target.value})}
+                          onChange={(e) => setEditData({...editData, dni: e.target.value.replace(/\s/g, '')})}
                           style={{ width: '100%', padding: '6px' }}
                         />
                       </td>
@@ -145,7 +145,7 @@ const AccesoSocio = () => {
                         <input 
                           type="text" 
                           value={editData.ce || ''} 
-                          onChange={(e) => setEditData({...editData, ce: e.target.value})}
+                          onChange={(e) => setEditData({...editData, ce: e.target.value.replace(/\s/g, '')})}
                           style={{ width: '100%', padding: '6px' }}
                         />
                       </td>

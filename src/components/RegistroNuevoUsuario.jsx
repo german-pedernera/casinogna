@@ -49,6 +49,8 @@ const RegistroNuevoUsuario = () => {
     let finalValue = value;
     if (name === 'nombreApellido') {
       finalValue = formatName(value);
+    } else if (name === 'dni' || name === 'ce') {
+      finalValue = value.replace(/\s/g, '');
     }
     setFormData({ ...formData, [name]: finalValue });
   };

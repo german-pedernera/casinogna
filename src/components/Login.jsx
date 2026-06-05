@@ -41,7 +41,8 @@ const Login = ({ onLogin }) => {
           const userData = data[0];
           
           // Actualizar último acceso (ignora error si no existe la columna)
-          supabase.from('usuarios').update({ ultimo_acceso: new Date().toISOString() }).eq('id', userData.id).then();
+          const { error: updateError } = await supabase.from('usuarios').update({ ultimo_acceso: new Date().toISOString() }).eq('id', userData.id);
+          if (updateError) console.error("Error actualizando último acceso:", updateError);
 
           onLogin({ 
             role: 'user', 
@@ -79,7 +80,7 @@ const Login = ({ onLogin }) => {
               type="text"
               placeholder="MI (Usuario)"
               value={mi}
-              onChange={(e) => setMi(e.target.value)}
+              onChange={(e) => setMi(e.target.value.replace(/\s/g, ''))}
               required
             />
           </div>
@@ -88,7 +89,7 @@ const Login = ({ onLogin }) => {
               type={showCe ? "text" : "password"}
               placeholder="Contraseña"
               value={ce}
-              onChange={(e) => setCe(e.target.value)}
+              onChange={(e) => setCe(e.target.value.replace(/\s/g, ''))}
               required
               autoComplete="new-password"
               style={{ paddingRight: '40px' }}
