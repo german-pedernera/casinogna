@@ -107,7 +107,7 @@ const Login = ({ onLogin }) => {
           
 
 
-          <button type="submit" className="login-btn">
+          <button type="submit" className="login-btn uiverse-btn">
             Ingresar a la App
           </button>
         </form>

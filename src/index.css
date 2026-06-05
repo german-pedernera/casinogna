@@ -837,3 +837,29 @@ body.dark-theme div[style*="background-color: #ffffff"] {
               0 0 30px #323232,
               0 0 40px hsl(176.61, 42.28%, 40.7%) 19.6%;
 }
+
+/* From Uiverse.io by zjssun */ 
+.uiverse-btn {
+  padding: 10px 20px !important;
+  text-transform: uppercase !important;
+  border-radius: 8px !important;
+  font-size: 17px !important;
+  font-weight: 500 !important;
+  color: #ffffff80 !important;
+  text-shadow: none !important;
+  background: transparent !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+  border: 1px solid #ffffff80 !important;
+  transition: 0.5s ease !important;
+  user-select: none !important;
+}
+
+.uiverse-btn:hover,
+.uiverse-btn:focus {
+  color: #ffffff !important;
+  background: #008cff !important;
+  border: 1px solid #008cff !important;
+  text-shadow: 0 0 5px #ffffff, 0 0 10px #ffffff, 0 0 20px #ffffff !important;
+  box-shadow: 0 0 5px #008cff, 0 0 20px #008cff, 0 0 50px #008cff, 0 0 100px #008cff !important;
+}

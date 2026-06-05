@@ -141,9 +141,8 @@ const CambiarContrasena = ({ onBack }) => {
             <div className="d-flex flex-row justify-content-center gap-2 mt-3" style={{ maxWidth: '400px', margin: '0 auto' }}>
               <button 
                 type="submit" 
-                className="btn flex-grow-1"
+                className="btn flex-grow-1 uiverse-btn"
                 disabled={loading}
-                style={{ backgroundColor: 'white', color: 'black', borderRadius: '30px', border: 'none', boxShadow: 'none', fontWeight: '600' }}
               >
                 {loading ? 'Verificando...' : 'Verificar Credenciales'}
               </button>
@@ -151,8 +150,7 @@ const CambiarContrasena = ({ onBack }) => {
               <button 
                 type="button"
                 onClick={onBack}
-                className="btn flex-grow-1"
-                style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)', color: 'white', borderRadius: '30px', border: '1px solid rgba(255, 255, 255, 0.4)', boxShadow: 'none', fontWeight: '600', backdropFilter: 'blur(5px)' }}
+                className="btn flex-grow-1 uiverse-btn"
               >
                 Volver
               </button>
@@ -209,9 +207,8 @@ const CambiarContrasena = ({ onBack }) => {
             <div className="d-flex flex-row justify-content-center gap-2 mt-3" style={{ maxWidth: '400px', margin: '0 auto' }}>
               <button 
                 type="submit" 
-                className="btn flex-grow-1"
+                className="btn flex-grow-1 uiverse-btn"
                 disabled={loading}
-                style={{ backgroundColor: 'white', color: 'black', borderRadius: '30px', border: 'none', boxShadow: 'none', fontWeight: '600' }}
               >
                 {loading ? 'Actualizando...' : 'Actualizar Contraseña'}
               </button>
@@ -222,8 +219,7 @@ const CambiarContrasena = ({ onBack }) => {
                   setStep(1);
                   setMensaje({text:'', type:''});
                 }}
-                className="btn flex-grow-1"
-                style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)', color: 'white', borderRadius: '30px', border: '1px solid rgba(255, 255, 255, 0.4)', boxShadow: 'none', fontWeight: '600', backdropFilter: 'blur(5px)' }}
+                className="btn flex-grow-1 uiverse-btn"
               >
                 Cancelar
               </button>
