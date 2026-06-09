@@ -73,6 +73,13 @@ const Login = ({ onLogin }) => {
   return (
     <div className="login-container">
       <div className="login-card">
+        <div className="text-center">
+          <img 
+            src="/gendarmeria_nacional_escudo.png" 
+            alt="Logo Gendarmería" 
+            style={{ width: '150px', height: 'auto', marginBottom: '15px' }} 
+          />
+        </div>
         <h2>Casino de Oficiales del Escuadrón de Seguridad Vial "Santa Catalina"</h2>
         <form onSubmit={handleSubmit} autoComplete="off" className="d-flex flex-column gap-3">
           <div>
@@ -96,8 +103,8 @@ const Login = ({ onLogin }) => {
             />
             <button 
               type="button"
-              className="btn btn-link position-absolute"
-              style={{ right: '10px', top: '50%', transform: 'translateY(-50%)', padding: 0, color: 'white', border: 'none', background: 'none' }}
+              className="btn position-absolute"
+              style={{ right: '10px', top: '50%', transform: 'translateY(-50%)', padding: 0, color: '#555', border: 'none', background: 'none', boxShadow: 'none', outline: 'none' }}
               onClick={() => setShowCe(!showCe)}
               title={showCe ? "Ocultar contraseña" : "Ver contraseña"}
             >

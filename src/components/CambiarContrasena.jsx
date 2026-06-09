@@ -123,8 +123,8 @@ const CambiarContrasena = ({ onBack }) => {
               />
               <button 
                 type="button"
-                className="btn btn-link position-absolute"
-                style={{ right: '10px', top: '50%', transform: 'translateY(-50%)', padding: 0, color: 'white', border: 'none', background: 'none', boxShadow: 'none' }}
+                className="btn position-absolute"
+                style={{ right: '10px', top: '50%', transform: 'translateY(-50%)', padding: 0, color: '#555', border: 'none', background: 'none', boxShadow: 'none', outline: 'none' }}
                 onClick={() => setShowCeActual(!showCeActual)}
                 title={showCeActual ? "Ocultar contraseña" : "Ver contraseña"}
               >
@@ -170,8 +170,8 @@ const CambiarContrasena = ({ onBack }) => {
               />
               <button 
                 type="button"
-                className="btn btn-link position-absolute"
-                style={{ right: '10px', top: '50%', transform: 'translateY(-50%)', padding: 0, color: 'white', border: 'none', background: 'none', boxShadow: 'none' }}
+                className="btn position-absolute"
+                style={{ right: '10px', top: '50%', transform: 'translateY(-50%)', padding: 0, color: '#555', border: 'none', background: 'none', boxShadow: 'none', outline: 'none' }}
                 onClick={() => setShowNuevoCe(!showNuevoCe)}
               >
                 {showNuevoCe ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -190,8 +190,8 @@ const CambiarContrasena = ({ onBack }) => {
               />
               <button 
                 type="button"
-                className="btn btn-link position-absolute"
-                style={{ right: '10px', top: '50%', transform: 'translateY(-50%)', padding: 0, color: 'white', border: 'none', background: 'none', boxShadow: 'none' }}
+                className="btn position-absolute"
+                style={{ right: '10px', top: '50%', transform: 'translateY(-50%)', padding: 0, color: '#555', border: 'none', background: 'none', boxShadow: 'none', outline: 'none' }}
                 onClick={() => setShowConfirmarCe(!showConfirmarCe)}
               >
                 {showConfirmarCe ? <EyeOff size={20} /> : <Eye size={20} />}

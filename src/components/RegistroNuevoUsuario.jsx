@@ -145,7 +145,7 @@ const RegistroNuevoUsuario = () => {
             />
             <div 
               className="position-absolute" 
-              style={{ right: '12px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', color: '#999', display: 'flex', alignItems: 'center' }}
+              style={{ right: '12px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', color: '#555', display: 'flex', alignItems: 'center' }}
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}

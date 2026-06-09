@@ -222,7 +222,6 @@ const Layout = ({ user, onLogout }) => {
     { path: '/documentacion', label: 'Documentación Gastos', icon: <FileText size={20} />, roles: ['user', 'admin'] },
     { path: '/galeria', label: 'Galería Fotográfica', icon: <ImageIcon size={20} />, roles: ['user', 'admin'] },
     { path: '/socios', label: 'Fecha de Cumpleaños', icon: <Users size={20} />, roles: ['user', 'admin'] },
-    { path: '/estadisticas', label: 'Estadísticas', icon: <PieChart size={20} />, roles: ['user', 'admin'] },
     { path: '/admin', label: 'Panel de Control', icon: <LayoutDashboard size={20} />, roles: ['admin'] },
   ];
 
@@ -315,7 +314,7 @@ const Layout = ({ user, onLogout }) => {
               </div>
               <button 
                 className="btn" 
-                style={{ color: 'white', padding: '8px', background: 'none', border: 'none' }} 
+                style={{ color: 'white', padding: '8px', background: 'none', border: 'none', boxShadow: 'none', outline: 'none' }} 
                 onClick={() => setIsMenuOpen(false)}
                 title="Cerrar menú"
               >

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../supabase';
-import { Edit2, Save, Trash2, X, Search } from 'lucide-react';
+import { Edit2, Save, Trash2, X, Search, Eye, EyeOff } from 'lucide-react';
 import { useModal } from '../context/ModalContext';
 
 const getRankWeight = (jerarquia) => {
@@ -33,6 +33,7 @@ const AccesoSocio = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [editData, setEditData] = useState({});
+  const [revealedPasswords, setRevealedPasswords] = useState({});
   const { showModal } = useModal();
 
   const fetchUsuarios = async () => {
@@ -47,6 +48,8 @@ const AccesoSocio = () => {
         return a.id - b.id;
       });
       setUsuarios(sortedData);
+      // Resetear las contraseñas reveladas al recargar
+      setRevealedPasswords({});
     } catch (error) {
       console.error("Error fetching usuarios:", error);
     } finally {
@@ -194,7 +197,23 @@ const AccesoSocio = () => {
                   ) : (
                     <>
                       <td style={{ padding: '12px 8px', fontWeight: '500', color: '#0d6efd' }}>{user.dni || '-'}</td>
-                      <td style={{ padding: '12px 8px', fontFamily: 'monospace', fontSize: '1.1em' }}>{user.ce || '-'}</td>
+                      <td style={{ padding: '12px 8px', fontFamily: 'monospace', fontSize: '1.1em' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span style={{ letterSpacing: revealedPasswords[user.id] ? 'normal' : '0.1em' }}>
+                            {revealedPasswords[user.id] ? (user.ce || '-') : (user.ce ? '••••••••' : '-')}
+                          </span>
+                          {user.ce && (
+                            <button
+                              type="button"
+                              onClick={() => setRevealedPasswords(prev => ({ ...prev, [user.id]: !prev[user.id] }))}
+                              title={revealedPasswords[user.id] ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#666', padding: '2px', display: 'flex', alignItems: 'center' }}
+                            >
+                              {revealedPasswords[user.id] ? <EyeOff size={15} /> : <Eye size={15} />}
+                            </button>
+                          )}
+                        </div>
+                      </td>
                       <td style={{ padding: '12px 8px', color: '#666', fontSize: '0.9em' }}>
                         {user.ultimo_acceso ? new Date(user.ultimo_acceso).toLocaleString('es-AR') : 'Nunca'}
                       </td>

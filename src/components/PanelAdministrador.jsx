@@ -7,7 +7,6 @@ import Balance from './Balance';
 import RegistroSocios from './RegistroSocios';
 import RegistroNuevoUsuario from './RegistroNuevoUsuario';
 import PlanillaCompletaSocio from './PlanillaCompletaSocio';
-import Estadisticas from './Estadisticas';
 import AccesoSocio from './AccesoSocio';
 import CapacidadSupabase from './CapacidadSupabase';
 import { AlertTriangle, Settings } from 'lucide-react';
@@ -75,7 +74,6 @@ const PanelAdministrador = () => {
     { id: 'socios', label: 'Fecha de cumpleaños' },
     { id: 'planillaCompleta', label: 'Planilla Completa Socio' },
     { id: 'accesoSocio', label: 'Acceso Socio' },
-    { id: 'estadisticas', label: 'Estadísticas' },
     { id: 'capacidad', label: 'Capacidad Supabase' }
   ];
 
@@ -180,7 +178,6 @@ const PanelAdministrador = () => {
         {activeTab === 'socios' && <RegistroSocios isAdmin={true} />}
         { activeTab === 'planillaCompleta' && <PlanillaCompletaSocio isAdmin={true} /> }
         { activeTab === 'accesoSocio' && <AccesoSocio /> }
-        { activeTab === 'estadisticas' && <Estadisticas /> }
         { activeTab === 'capacidad' && <CapacidadSupabase /> }
       </div>
     </div>
