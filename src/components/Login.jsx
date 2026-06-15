@@ -4,6 +4,7 @@ import { supabase } from '../supabase';
 import { useModal } from '../context/ModalContext';
 import { Eye, EyeOff } from 'lucide-react';
 import CambiarContrasena from './CambiarContrasena';
+import RegistroNuevoUsuario from './RegistroNuevoUsuario';
 
 import './Login.css';
 
@@ -12,6 +13,7 @@ const Login = ({ onLogin }) => {
   const [ce, setCe] = useState('');
   const [showCe, setShowCe] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
+  const [showRegistration, setShowRegistration] = useState(false);
   const navigate = useNavigate();
   const { showModal } = useModal();
 
@@ -39,6 +41,11 @@ const Login = ({ onLogin }) => {
         
         if (data && data.length > 0) {
           const userData = data[0];
+
+          if (userData.aprobado === false) {
+            await showModal({ type: 'alert', title: 'Aprobación Pendiente', message: 'Su solicitud de alta aún está pendiente de aprobación por parte del administrador.' });
+            return;
+          }
           
           // Actualizar último acceso (ignora error si no existe la columna)
           const { error: updateError } = await supabase.from('usuarios').update({ ultimo_acceso: new Date().toISOString() }).eq('id', userData.id);
@@ -68,6 +75,20 @@ const Login = ({ onLogin }) => {
 
   if (showChangePassword) {
     return <CambiarContrasena onBack={() => setShowChangePassword(false)} />;
+  }
+
+  if (showRegistration) {
+    return (
+      <div className="login-container" style={{ padding: '20px', overflowY: 'auto' }}>
+        <div style={{ maxWidth: '600px', width: '100%', margin: '0 auto' }}>
+          <RegistroNuevoUsuario 
+            isSelfRegistration={true} 
+            onRegistroExitoso={() => setShowRegistration(false)} 
+            onCancel={() => setShowRegistration(false)}
+          />
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -121,8 +142,12 @@ const Login = ({ onLogin }) => {
 
         <div className="social-login">
 
-          <div className="already-account">
-            ¿Ya tienes una cuenta? <button type="button" onClick={() => setShowChangePassword(true)}>Modificar contraseña</button>
+          <div className="already-account mb-3">
+            ¿Ya tienes una cuenta? <br/><button type="button" onClick={() => setShowChangePassword(true)} style={{ marginTop: '5px' }}>Modificar contraseña</button>
+          </div>
+          <hr style={{ borderTop: '1px solid rgba(255,255,255,0.2)', width: '80%', margin: '15px auto' }} />
+          <div className="already-account mt-3">
+            ¿No eres socio? <br/><button type="button" onClick={() => setShowRegistration(true)} style={{ marginTop: '5px' }}>Registrarse (Alta Socio)</button>
           </div>
         </div>
       </div>

@@ -52,7 +52,19 @@ const PlanillaMensual = ({ isAdmin }) => {
         .select('*')
         .order('id', { ascending: true });
       if (error) throw error;
-      setFilas(data);
+      
+      // Eliminar duplicados si existen en la BD por error
+      const uniqueData = [];
+      const seen = new Set();
+      (data || []).forEach(row => {
+        const socioKey = row.socio ? row.socio.trim().toLowerCase() : '';
+        if (socioKey && !seen.has(socioKey)) {
+          seen.add(socioKey);
+          uniqueData.push(row);
+        }
+      });
+      
+      setFilas(uniqueData);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching planilla:", error);
@@ -64,6 +76,10 @@ const PlanillaMensual = ({ isAdmin }) => {
     (fila.socio || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
     (fila.jerarquia || '').toLowerCase().includes(searchTerm.toLowerCase())
   ).sort((a, b) => {
+    const orderA = a.num_orden && a.num_orden > 0 ? a.num_orden : 999999;
+    const orderB = b.num_orden && b.num_orden > 0 ? b.num_orden : 999999;
+    if (orderA !== orderB) return orderA - orderB;
+    
     const rankDiff = getRankWeight(a.jerarquia) - getRankWeight(b.jerarquia);
     if (rankDiff !== 0) return rankDiff;
     return a.id - b.id;
@@ -321,7 +337,7 @@ const PlanillaMensual = ({ isAdmin }) => {
       {loading ? (
         <p>Cargando datos...</p>
       ) : (
-        <div style={{ overflowX: 'auto' }}>
+        <div className="table-responsive">
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center' }}>
             <thead>
               <tr style={{ borderBottom: '2px solid var(--primary-green)' }}>

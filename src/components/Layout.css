@@ -267,6 +267,41 @@ body.dark-theme aside.sidebar .nav-list .nav-item .animated-button:hover span {
   color: #212121 !important;
 }
 
+.submenu-list {
+  list-style: none;
+  padding: 16px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background-color: var(--primary-color, #1a237e);
+  border-radius: 12px;
+  position: absolute;
+  bottom: -20px;
+  left: calc(100% + 10px);
+  width: max-content;
+  z-index: 1000;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@media (max-width: 768px) {
+  .submenu-list {
+    position: relative;
+    top: auto;
+    left: auto;
+    margin-top: 8px;
+    padding: 0 0 0 16px;
+    background-color: transparent;
+    box-shadow: none;
+    animation: none;
+  }
+}
 
 /* Logout Button variation (White outline & text, Red hover circle) */
 .animated-button.btn-logout {
@@ -542,4 +577,16 @@ body.dark-theme .settings-action-btn:hover {
   background-color: rgba(255, 255, 255, 0.04);
   border-color: var(--primary-green);
   color: var(--primary-green);
+}
+
+/* Responsive Tables */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 1rem;
+}
+
+.table-responsive table {
+  min-width: 600px; /* Force scroll on small screens */
 }

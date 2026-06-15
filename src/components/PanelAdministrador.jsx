@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { supabase } from '../supabase';
 import PlanillaMensual from './PlanillaMensual';
 import DocumentacionGastos from './DocumentacionGastos';
@@ -9,10 +10,22 @@ import RegistroNuevoUsuario from './RegistroNuevoUsuario';
 import PlanillaCompletaSocio from './PlanillaCompletaSocio';
 import AccesoSocio from './AccesoSocio';
 import CapacidadSupabase from './CapacidadSupabase';
+import AprobacionSocios from './AprobacionSocios';
 import { AlertTriangle, Settings } from 'lucide-react';
 
 const PanelAdministrador = () => {
-  const [activeTab, setActiveTab] = useState('planilla');
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const urlTab = searchParams.get('tab');
+  
+  const [activeTab, setActiveTab] = useState(urlTab || 'planilla');
+
+  useEffect(() => {
+    if (urlTab) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setActiveTab(urlTab);
+    }
+  }, [urlTab]);
   const [maintenanceActive, setMaintenanceActive] = useState(false);
   const [loadingMaintenance, setLoadingMaintenance] = useState(true);
 
@@ -65,23 +78,11 @@ const PanelAdministrador = () => {
     }
   };
 
-  const tabs = [
-    { id: 'planilla', label: 'Planilla Mensual' },
-    { id: 'documentacion', label: 'Documentación' },
-    { id: 'galeria', label: 'Galería' },
-    { id: 'balance', label: 'Balance' },
-    { id: 'nuevoSocio', label: 'Alta Socio' },
-    { id: 'socios', label: 'Fecha de cumpleaños' },
-    { id: 'planillaCompleta', label: 'Planilla Completa Socio' },
-    { id: 'accesoSocio', label: 'Acceso Socio' },
-    { id: 'capacidad', label: 'Capacidad Supabase' }
-  ];
-
   return (
     <div className="container" style={{ fontFamily: "'Outfit', 'Inter', sans-serif" }}>
       <h2 className="mb-4">Panel de Control (Administrador)</h2>
       <p className="text-light mb-4">
-        Desde este panel usted puede cargar, modifier, eliminar y guardar datos del sistema.
+        Desde este panel usted puede cargar, modificar, eliminar y guardar datos del sistema.
       </p>
 
       {/* Tarjeta de Estado del Sistema y Mantenimiento */}
@@ -142,33 +143,6 @@ const PanelAdministrador = () => {
         </div>
       </div>
 
-      <div className="card mb-4" style={{ padding: '0', overflow: 'hidden' }}>
-        <div style={{ display: 'flex', borderBottom: '1px solid #E0E0E0', overflowX: 'auto' }}>
-          {tabs.map(tab => (
-            <button
-              key={tab.id}
-              className="admin-tab"
-              onClick={() => setActiveTab(tab.id)}
-              style={{
-                flex: '1 1 auto',
-                textAlign: 'center',
-                padding: '16px 12px',
-                background: 'none',
-                border: 'none',
-                borderBottom: activeTab === tab.id ? '3px solid var(--primary-green)' : '3px solid transparent',
-                color: activeTab === tab.id ? 'var(--primary-green)' : 'var(--text-light)',
-                fontWeight: activeTab === tab.id ? '600' : '400',
-                cursor: 'pointer',
-                whiteSpace: 'nowrap',
-                transition: 'var(--transition)'
-              }}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
       <div className="admin-content">
         {activeTab === 'planilla' && <PlanillaMensual isAdmin={true} />}
         {activeTab === 'documentacion' && <DocumentacionGastos isAdmin={true} />}
@@ -179,6 +153,7 @@ const PanelAdministrador = () => {
         { activeTab === 'planillaCompleta' && <PlanillaCompletaSocio isAdmin={true} /> }
         { activeTab === 'accesoSocio' && <AccesoSocio /> }
         { activeTab === 'capacidad' && <CapacidadSupabase /> }
+        { activeTab === 'aprobacion' && <AprobacionSocios /> }
       </div>
     </div>
   );

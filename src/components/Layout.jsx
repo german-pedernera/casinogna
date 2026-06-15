@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../supabase';
-import { Menu, X, LogOut, LayoutDashboard, FileText, Calendar, Image as ImageIcon, Users, FileSpreadsheet, PieChart, Settings, MessageSquare, Eye, EyeOff } from 'lucide-react';
+import { Menu, X, LogOut, LayoutDashboard, FileText, Calendar, Image as ImageIcon, Users, FileSpreadsheet, Settings, MessageSquare, Eye, EyeOff } from 'lucide-react';
 import CambioDeColor from './CambioDeColor';
 import './Layout.css';
 
@@ -12,6 +12,7 @@ const Layout = ({ user, onLogout }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [onlineCount, setOnlineCount] = useState(1);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [adminMenuExpanded, setAdminMenuExpanded] = useState(false);
   const [showTechSupportModal, setShowTechSupportModal] = useState(false);
   const [showPersonalDataModal, setShowPersonalDataModal] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(false);
@@ -222,7 +223,24 @@ const Layout = ({ user, onLogout }) => {
     { path: '/documentacion', label: 'Documentación Gastos', icon: <FileText size={20} />, roles: ['user', 'admin'] },
     { path: '/galeria', label: 'Galería Fotográfica', icon: <ImageIcon size={20} />, roles: ['user', 'admin'] },
     { path: '/socios', label: 'Fecha de Cumpleaños', icon: <Users size={20} />, roles: ['user', 'admin'] },
-    { path: '/admin', label: 'Panel de Control', icon: <LayoutDashboard size={20} />, roles: ['admin'] },
+    { 
+      path: '/admin', 
+      label: 'Panel de Control', 
+      icon: <LayoutDashboard size={20} />, 
+      roles: ['admin'],
+      submenus: [
+        { id: 'planilla', label: 'Planilla Mensual' },
+        { id: 'documentacion', label: 'Documentación' },
+        { id: 'galeria', label: 'Galería' },
+        { id: 'balance', label: 'Balance' },
+        { id: 'nuevoSocio', label: 'Alta Socio' },
+        { id: 'socios', label: 'Fecha de cumpleaños' },
+        { id: 'planillaCompleta', label: 'Planilla Completa Socio' },
+        { id: 'accesoSocio', label: 'Acceso Socio' },
+        { id: 'capacidad', label: 'Capacidad Supabase' },
+        { id: 'aprobacion', label: 'Aprobación de Alta' }
+      ]
+    },
   ];
 
   const allowedLinks = navLinks.filter(link => link.roles.includes(currentUser?.role));
@@ -334,11 +352,22 @@ const Layout = ({ user, onLogout }) => {
           </div>
           <ul className="nav-list">
             {allowedLinks.map((link) => (
-              <li key={link.path} className="nav-item">
+              <li key={link.path} className="nav-item" style={{ position: 'relative' }}>
                 <Link 
                   to={link.path} 
                   className={`animated-button ${location.pathname === link.path ? 'active' : ''}`}
-                  onClick={() => setIsMenuOpen(false)}
+                  onClick={(e) => {
+                    if (link.submenus) {
+                      e.preventDefault();
+                      setAdminMenuExpanded(!adminMenuExpanded);
+                      if (location.pathname !== link.path) {
+                        navigate(link.path);
+                      }
+                    } else {
+                      setIsMenuOpen(false);
+                      setAdminMenuExpanded(false);
+                    }
+                  }}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="arr-2">
                     <path d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"></path>
@@ -352,6 +381,39 @@ const Layout = ({ user, onLogout }) => {
                     <path d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"></path>
                   </svg>
                 </Link>
+
+                {link.submenus && adminMenuExpanded && (
+                  <ul className="submenu-list">
+                    {link.submenus.map(sub => {
+                      const isActive = location.pathname === link.path && location.search.includes(`tab=${sub.id}`);
+                      return (
+                        <li key={sub.id} className="nav-item">
+                          <Link
+                            to={`${link.path}?tab=${sub.id}`}
+                            className={`animated-button ${isActive ? 'active' : ''}`}
+                            onClick={() => {
+                              setIsMenuOpen(false);
+                              setAdminMenuExpanded(false);
+                            }}
+                            style={{ padding: '8px 12px', fontSize: '0.85rem' }}
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="arr-2">
+                              <path d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"></path>
+                            </svg>
+                            <span className="text">
+                              <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'currentColor', marginRight: '4px' }}></span>
+                              <span>{sub.label}</span>
+                            </span>
+                            <span className="circle"></span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="arr-1">
+                              <path d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"></path>
+                            </svg>
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
               </li>
             ))}
             <li className="nav-item mt-4">

@@ -14,6 +14,7 @@
 .login-card {
   width: 100%;
   max-width: 400px;
+  margin: 0 auto;
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
@@ -24,7 +25,8 @@
   color: white;
 }
 
-.login-card h2 {
+.login-card h2,
+.login-card h3 {
   font-size: 1.3rem;
   font-weight: 700;
   color: white !important;
@@ -33,7 +35,9 @@
   line-height: 1.4;
 }
 
-.login-card input {
+.login-card input,
+.login-card select,
+.login-card textarea {
   width: 100%;
   background: transparent !important;
   border: none !important;
@@ -44,6 +48,22 @@
   outline: none;
   box-shadow: none !important;
   border-radius: 8px !important;
+}
+
+.login-card select {
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 12px center !important;
+  background-size: 16px !important;
+  padding-right: 40px !important;
+  cursor: pointer;
+}
+
+.login-card select option {
+  background-color: #222;
+  color: white;
 }
 
 .login-card input::placeholder {

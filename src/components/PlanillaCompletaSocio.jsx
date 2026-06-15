@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../supabase';
-import { Trash2, Search, Download, Edit2, Save, X } from 'lucide-react';
+import { Trash2, Search, Download, Edit2, Save, X, ArrowUp, ArrowDown } from 'lucide-react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { useModal } from '../context/ModalContext';
@@ -51,12 +51,16 @@ const PlanillaCompletaSocio = ({ isAdmin }) => {
 
   const fetchUsuarios = async () => {
     try {
-      const { data: rawData, error } = await supabase.from('usuarios').select('*').neq('dni', 'SISTEMA_CONFIG');
+      const { data: rawData, error } = await supabase.from('usuarios').select('*').neq('dni', 'SISTEMA_CONFIG').neq('aprobado', false);
       if (error) throw error;
       const data = rawData || [];
       
-      // Ordenar por jerarquía y luego por orden de carga (ID)
+      // Ordenar por num_orden, luego por jerarquía y orden de carga
       data.sort((a, b) => {
+        const orderA = a.num_orden && a.num_orden > 0 ? a.num_orden : 999999;
+        const orderB = b.num_orden && b.num_orden > 0 ? b.num_orden : 999999;
+        if (orderA !== orderB) return orderA - orderB;
+        
         const rankDiff = getRankWeight(a.jerarquia) - getRankWeight(b.jerarquia);
         if (rankDiff !== 0) return rankDiff;
         return a.id - b.id;
@@ -136,6 +140,68 @@ const PlanillaCompletaSocio = ({ isAdmin }) => {
       fetchUsuarios();
     } catch (error) {
       console.error("Error updating usuario:", error);
+      showModal({ type: 'alert', title: 'Error al Guardar', message: 'No se pudo guardar. ' + (error.message || 'Verifique la base de datos.') });
+    }
+  };
+
+  const handleMoveOrder = async (index, direction) => {
+    if (!isAdmin) return;
+    
+    // usuariosFiltrados might be a subset if searchTerm is active.
+    // It's safer to only allow reordering if NOT searching.
+    if (searchTerm) {
+      showModal({ type: 'alert', title: 'Aviso', message: 'No se puede reordenar mientras hay una búsqueda activa. Por favor, limpie el buscador primero.' });
+      return;
+    }
+
+    const newUsuarios = [...usuarios];
+    if (direction === 'up' && index > 0) {
+      const temp = newUsuarios[index];
+      newUsuarios[index] = newUsuarios[index - 1];
+      newUsuarios[index - 1] = temp;
+    } else if (direction === 'down' && index < newUsuarios.length - 1) {
+      const temp = newUsuarios[index];
+      newUsuarios[index] = newUsuarios[index + 1];
+      newUsuarios[index + 1] = temp;
+    } else {
+      return;
+    }
+
+    setUsuarios(newUsuarios); // Optimistic UI update
+
+    const promises = [];
+    newUsuarios.forEach((user, idx) => {
+      const newOrder = idx + 1;
+      if (user.num_orden !== newOrder) {
+        user.num_orden = newOrder;
+        promises.push(supabase.from('usuarios').update({ num_orden: newOrder }).eq('id', user.id));
+        if (user.nombreApellido) {
+          promises.push(supabase.from('planilla_mensual').update({ num_orden: newOrder }).eq('socio', user.nombreApellido));
+        }
+      }
+    });
+
+    try {
+      if (promises.length > 0) {
+        // Enviar silenciosamente en background, pero detectar errores
+        const results = await Promise.all(promises);
+        const hasErrors = results.some(r => r.error);
+        if (hasErrors) {
+          const firstError = results.find(r => r.error).error;
+          console.error("Database error details:", firstError);
+          showModal({ 
+            type: 'alert', 
+            title: 'Error de Base de Datos', 
+            message: 'No se guardó el orden porque falta la columna "num_orden" en Supabase. Por favor, ejecuta el código SQL que te pasé en el panel de Supabase.' 
+          });
+          // Revert optimistic update
+          fetchUsuarios();
+        }
+      }
+    } catch (error) {
+      console.error("Error updating order:", error);
+      showModal({ type: 'alert', title: 'Error', message: 'Ocurrió un error inesperado al guardar el orden.' });
+      fetchUsuarios();
     }
   };
 
@@ -206,15 +272,15 @@ const PlanillaCompletaSocio = ({ isAdmin }) => {
       {loading ? (
         <p>Cargando datos...</p>
       ) : (
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
+        <div className="table-responsive">
+          <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px', whiteSpace: 'nowrap' }}>
             <thead>
               <tr style={{ backgroundColor: 'var(--primary-green)', color: 'white', textAlign: 'left' }}>
                 <th style={{ padding: '12px 8px', borderRadius: '4px 0 0 4px', color: 'white' }}>NUM ORD</th>
                 <th style={{ padding: '12px 8px', color: 'white' }}>Jerarquía</th>
                 <th style={{ padding: '12px 8px', color: 'white' }}>Nombre y Apellido</th>
                 <th style={{ padding: '12px 8px', color: 'white' }}>DNI (MI)</th>
-                <th style={{ padding: '12px 8px', color: 'white' }}>CE</th>
+                <th style={{ padding: '12px 8px', color: 'white' }}>Contraseña</th>
                 <th style={{ padding: '12px 8px', color: 'white' }}>Fecha Nac.</th>
                 <th style={{ padding: '12px 8px', color: 'white' }}>Edad</th>
                 <th style={{ padding: '12px 8px', color: 'white' }}>Teléfono</th>
@@ -311,28 +377,24 @@ const PlanillaCompletaSocio = ({ isAdmin }) => {
                       <td style={{ padding: '12px 8px' }}>{user.jerarquia || '-'}</td>
                       <td style={{ padding: '12px 8px', fontWeight: '500' }}>{user.nombreApellido}</td>
                       <td style={{ padding: '12px 8px' }}>{user.dni}</td>
-                      <td style={{ padding: '12px 8px' }}>{user.ce}</td>
-                      <td style={{ padding: '12px 8px' }}>{user.fechaNacimiento || '-'}</td>
+                      <td style={{ padding: '12px 8px' }}>{user.ce || '-'}</td>
+                      <td style={{ padding: '12px 8px' }}>{user.fechaNacimiento ? new Date(user.fechaNacimiento).toLocaleDateString() : '-'}</td>
                       <td style={{ padding: '12px 8px' }}>{user.edad || '-'}</td>
                       <td style={{ padding: '12px 8px' }}>{user.telefono || '-'}</td>
                       {isAdmin && (
                         <td style={{ padding: '12px 8px', textAlign: 'center' }}>
                           <div className="d-flex gap-2 justify-content-center">
-                            <button 
-                              className="btn btn-primary" 
-                              onClick={() => handleEditClick(user)}
-                              style={{ padding: '6px 10px' }}
-                              title="Editar socio"
-                            >
-                              <Edit2 size={16} />
+                            <button onClick={() => handleMoveOrder(index, 'up')} className="btn btn-outline-secondary" style={{ padding: '4px 8px' }} title="Subir orden" disabled={!!searchTerm || index === 0}>
+                              <ArrowUp size={14} />
                             </button>
-                            <button 
-                              className="btn btn-danger" 
-                              onClick={() => handleDelete(user)}
-                              style={{ padding: '6px 10px' }}
-                              title="Eliminar socio"
-                            >
-                              <Trash2 size={16} />
+                            <button onClick={() => handleMoveOrder(index, 'down')} className="btn btn-outline-secondary" style={{ padding: '4px 8px' }} title="Bajar orden" disabled={!!searchTerm || index === usuariosFiltrados.length - 1}>
+                              <ArrowDown size={14} />
+                            </button>
+                            <button onClick={() => handleEditClick(user)} className="btn btn-outline-primary" style={{ padding: '4px 8px' }} title="Editar Socio">
+                              <Edit2 size={14} />
+                            </button>
+                            <button onClick={() => handleDelete(user)} className="btn btn-outline-danger" style={{ padding: '4px 8px' }} title="Eliminar Socio">
+                              <Trash2 size={14} />
                             </button>
                           </div>
                         </td>

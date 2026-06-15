@@ -38,11 +38,15 @@ const AccesoSocio = () => {
 
   const fetchUsuarios = async () => {
     try {
-      const { data, error } = await supabase.from('usuarios').select('*').neq('dni', 'SISTEMA_CONFIG');
+      const { data, error } = await supabase.from('usuarios').select('*').neq('dni', 'SISTEMA_CONFIG').neq('aprobado', false);
       if (error) throw error;
       
       // Ordenar por jerarquía y luego por orden de carga (ID)
       const sortedData = (data || []).sort((a, b) => {
+        const orderA = a.num_orden && a.num_orden > 0 ? a.num_orden : 999999;
+        const orderB = b.num_orden && b.num_orden > 0 ? b.num_orden : 999999;
+        if (orderA !== orderB) return orderA - orderB;
+        
         const rankDiff = getRankWeight(a.jerarquia) - getRankWeight(b.jerarquia);
         if (rankDiff !== 0) return rankDiff;
         return a.id - b.id;

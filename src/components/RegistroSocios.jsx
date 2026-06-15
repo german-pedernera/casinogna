@@ -38,7 +38,7 @@ const RegistroSocios = ({ isAdmin }) => {
 
   const fetchSocios = async () => {
     try {
-      const { data, error } = await supabase.from('usuarios').select('*').neq('dni', 'SISTEMA_CONFIG');
+      const { data, error } = await supabase.from('usuarios').select('*').neq('dni', 'SISTEMA_CONFIG').neq('aprobado', false);
       if (error) throw error;
       setSocios(data || []);
       setLoading(false);
@@ -100,6 +100,10 @@ const RegistroSocios = ({ isAdmin }) => {
     
     return matchesSearch && matchesMonth;
   }).sort((a, b) => {
+    const orderA = a.num_orden && a.num_orden > 0 ? a.num_orden : 999999;
+    const orderB = b.num_orden && b.num_orden > 0 ? b.num_orden : 999999;
+    if (orderA !== orderB) return orderA - orderB;
+
     const rankDiff = getRankWeight(a.jerarquia) - getRankWeight(b.jerarquia);
     if (rankDiff !== 0) return rankDiff;
     return new Date(a.fechaRegistro) - new Date(b.fechaRegistro);
@@ -197,8 +201,8 @@ const RegistroSocios = ({ isAdmin }) => {
       {loading ? (
         <p>Cargando datos...</p>
       ) : (
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+        <div className="table-responsive">
+          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', whiteSpace: 'nowrap' }}>
             <thead>
               <tr style={{ backgroundColor: 'var(--primary-green)', color: 'white', textAlign: 'left' }}>
                 <th style={{ padding: '12px 8px', color: 'white', borderTopLeftRadius: '8px' }}>Nro Ord</th>

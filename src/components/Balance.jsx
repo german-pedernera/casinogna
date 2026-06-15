@@ -36,7 +36,17 @@ const Balance = ({ isAdmin }) => {
 
       const { data: planillasData, error: planillaError } = await supabase.from('planilla_mensual').select('*');
       if (planillaError) throw planillaError;
-      const planillas = planillasData || [];
+      
+      const uniquePlanillas = [];
+      const seenPlanillas = new Set();
+      (planillasData || []).forEach(row => {
+        const socioKey = row.socio ? row.socio.trim().toLowerCase() : '';
+        if (socioKey && !seenPlanillas.has(socioKey)) {
+          seenPlanillas.add(socioKey);
+          uniquePlanillas.push(row);
+        }
+      });
+      const planillas = uniquePlanillas;
       
       const currentYear = new Date().getFullYear();
       const virtuales = [];
