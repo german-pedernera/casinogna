@@ -34,7 +34,7 @@ const Balance = ({ isAdmin }) => {
       if (balanceError) throw balanceError;
       const data = rawBalance || [];
 
-      const { data: planillasData, error: planillaError } = await supabase.from('planilla_mensual').select('*');
+      const { data: planillasData, error: planillaError } = await supabase.from('planilla_mensual').select('*').order('id', { ascending: true });
       if (planillaError) throw planillaError;
       
       const uniquePlanillas = [];
@@ -48,6 +48,12 @@ const Balance = ({ isAdmin }) => {
       });
       const planillas = uniquePlanillas;
       
+      const nombresMeses = {
+        "Ene": "Enero", "Feb": "Febrero", "Mar": "Marzo", "Abr": "Abril",
+        "May": "Mayo", "Jun": "Junio", "Jul": "Julio", "Ago": "Agosto",
+        "Sep": "Septiembre", "Oct": "Octubre", "Nov": "Noviembre", "Dic": "Diciembre"
+      };
+
       const currentYear = new Date().getFullYear();
       const virtuales = [];
       MESES.forEach((mes) => {
@@ -55,7 +61,7 @@ const Balance = ({ isAdmin }) => {
         if (totalMes > 0) {
           virtuales.push({
             id: `virtual_${mes}`,
-            concepto: `Ingresos Planilla - ${mes} ${currentYear}`,
+            concepto: `Ingresos Planilla - ${nombresMeses[mes]} ${currentYear}`,
             haber: totalMes,
             debe: 0,
             isVirtual: true

@@ -19,7 +19,7 @@ const supabaseKey = supabaseKeyMatch ? supabaseKeyMatch[1].trim() : '';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function checkTable() {
-  const { data, error } = await supabase.from('propuestas').select('*').limit(1);
+  const { data, error } = await supabase.from('planilla_mensual').select('*').limit(1);
   if (error) {
     console.error("Error:", error);
   } else {
